@@ -1,0 +1,44 @@
+\documentclass[10pt]{article} 
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry} %This sets the margins of the report.
+
+\usepackage{graphicx} % A package allowing insertion of images into the text.
+
+\usepackage{color} % Allows the colour of the font to be changed by using the '\color' command: This is just to support the blue comments in this template...use standard (black) text in your report.
+
+\linespread{-1} % Sets the spacing between lines of text.
+\setlength{\parindent}{0cm}  % Suppresses indentation of text at the start of a paragraph
+
+\begin{document} % This begins the document proper and ends the pre-amble
+\title{LHCb summary}
+\date{}
+\maketitle
+\section{Week 1}
+\begin{itemize}
+\item test data to analyse invariant mass of B mason assuming $KKK$ decay, using known kaon mass
+\item looked at kaon/pion probabilities
+\item started analysing $B^{\pm} \rightarrow K^{\pm}\pi^+\pi^-$ decay
+\begin{itemize}
+\item selection: only include $P(kaon) > 0.9$ and $P(pion) > 0.7$
+\item selection: also excluded all muons
+\item assigned new variables for pion and kaon variables
+\item selection: pion charge sums to 0
+\item found invariant mass of B mason with same technique as before
+\item \textit{what are the sidebands?}
+\end{itemize}
+\item looked at two body resonance - intermediate decay via neutral particle
+\begin{itemize}
+\item want to get rid of  D mason decay as we only study direct decay
+\item selected data of B mason mass $\pm 60~MeV/c^2$ from mass plot - \textit{need to implement that this cut is only applied for this section}
+\item three possible intermediate decays: $\pi^+\pi^-$, $K^+\pi^+$ and $K^-\pi^+$
+\item computed invariant mass for all three possible cases
+\item plot under condition that charges sum to zero - reoccurring events form peak
+\item found multiple peaks: D mason from $K\pi$ decay and two relatively slightly shifted peaks in both $K\pi$ and $\pi \pi$
+\item applied D mason cut: reject all events with D mason mass $\pm 30 ~MeV/c^2$
+\item \textit{find out what other peaks are}
+\item no need to exclude muon tracks misidentified as pions - excluded muons from the start
+\item \textit{why do muon get easily misidentified as pions?}
+\end{itemize}
+\end{itemize}
+
+
+\end{document}

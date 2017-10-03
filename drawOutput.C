@@ -170,18 +170,21 @@ void drawOutput() {
   
 
   //fit
-  //Signal = new TF1("Signal", "gaus", 5279.29-40 ,5279.29+50);
-  //Background = new TF1("Background", "expo", 5279.29+80, 5700 );
-  //total = new TF1("total","gaus(0)+expo(3)",5279.29-40,5700);
-  //hmass_sel2->Fit(Signal, "R");
-  //hmass_sel2->Fit(Background, "R");
+  TF1 *Signal = new TF1("Signal", "gaus", 5279.29-40 ,5279.29+50);
+  TF1 *Background = new TF1("Background", "expo", 5279.29+80, 5700 );
+  //TF1 *CombBG = new TF1("CombBG", "pol3", 5100, 5279.29-40 );
+  TF1 *total = new TF1("total","gaus(0) + expo(3)",5100,5700);
+  hmass_sel2->Fit(Signal, "R");
+  hmass_sel2->Fit(Background, "R+");
+  //hmass_sel2->Fit(CombBG, "R+");
   
-  //Double_t par[5];
-  //Signal->GetParameters(&par[0]);
-  //Background->GetParameters(&par[3]);
+  Double_t par[5];
+  Signal->GetParameters(&par[0]);
+  Background->GetParameters(&par[3]);
+  //CombBG->GetParameters(&par[5]);
 
-  //total->SetParameters(par);
-  //hmass_sel2->Fit(total, "R");
+  total->SetParameters(par);
+  hmass_sel2->Fit(total, "R+");
 
   hmass_sel2->Draw();
   //total->Draw("same");

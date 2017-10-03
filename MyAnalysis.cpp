@@ -24,7 +24,7 @@ void MyAnalysis::BookHistos() {
   h_massR_K_Dmas  = new TH1F("h_massR_K_Dmas", "", 500, 1750, 1950);
   h_massR_K_Bmas  = new TH1F("h_massR_K_Bmas", "", 100, 5200, 5400);
   h_massR_Pi_Jmas  = new TH1F("h_massR_Pi_Jmas", "", 100, 3000, 3200);
-  h_massB_sel2 = new TH1F("h_massB_sel2", "", 500, 4750,5750);
+  h_massB_sel2 = new TH1F("h_massB_sel2", "", 500, 5050,5750);
   h_TXTY = new TH2F("h_TXTY","",100,-1,1,100,-1,1);
   // Add all histograms to a vector. This will take care of writing out histograms later on.
   v_Histos.push_back( h_PX );
@@ -100,7 +100,7 @@ void MyAnalysis::Execute() {
   //5.2 INVARIANT MASS
   double massK = 493.677; // MeV/c2 
   double massPi = 139.570; // MeV/c2
-  double massD = 1864.84; 
+  double massD = 1864.84; // MeV/c2
   double massB = invMass(H1_PX, H1_PY, H1_PZ, H2_PX, H2_PY, H2_PZ, H3_PX, H3_PY, H3_PZ, massK, massK, massK);
 
   h_massB->Fill(massB);

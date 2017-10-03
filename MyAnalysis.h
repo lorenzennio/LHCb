@@ -26,6 +26,8 @@ class MyAnalysis {
 		TH1F           *h_massR_K_Bmas;
 		TH1F           *h_massR_Pi_Jmas;
 		TH1F           *h_massB_sel2;
+		TH1F           *h_massB_matter;
+		TH1F           *h_massB_antimatter;
 		TH2F           *h_TXTY;
 		
 

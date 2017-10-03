@@ -24,7 +24,9 @@ void MyAnalysis::BookHistos() {
   h_massR_K_Dmas  = new TH1F("h_massR_K_Dmas", "", 500, 1750, 1950);
   h_massR_K_Bmas  = new TH1F("h_massR_K_Bmas", "", 100, 5200, 5400);
   h_massR_Pi_Jmas  = new TH1F("h_massR_Pi_Jmas", "", 100, 3000, 3200);
-  h_massB_sel2 = new TH1F("h_massB_sel2", "", 500, 5050,5750);
+  h_massB_sel2 = new TH1F("h_massB_sel2", "", 100, 5050,5650);
+  h_massB_matter = new TH1F("h_massB_matter", "", 100, 5050,5650);
+  h_massB_antimatter = new TH1F("h_massB_antimatter", "", 100, 5050,5650);
   h_TXTY = new TH2F("h_TXTY","",100,-1,1,100,-1,1);
   // Add all histograms to a vector. This will take care of writing out histograms later on.
   v_Histos.push_back( h_PX );
@@ -40,6 +42,8 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_massR_K_Bmas );
   v_Histos.push_back( h_massR_Pi_Jmas );
   v_Histos.push_back( h_massB_sel2 );
+  v_Histos.push_back( h_massB_matter );
+  v_Histos.push_back( h_massB_antimatter );
   v_Histos.push_back( h_TXTY );
 }
 
@@ -214,7 +218,7 @@ void MyAnalysis::Execute() {
   double massB2  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
   double massB_known = 5279.29; //MeV/c2
   //apply cuts +/-60MeV/c2 around b mason mass
-  // if( massB2 < massB_known - 60 || massB2 > massB_known + 60){return;}
+  //if( massB2 < massB_known - 60 || massB2 > massB_known + 60){return;}
 
   h_massB_sel->Fill(massB2);
 
@@ -241,17 +245,29 @@ void MyAnalysis::Execute() {
     return;
   }
  
-  
-  h_massR_K->Fill(massR_K);
-  h_massR_Pi->Fill(massR_Pi);
-
-  h_massR_K_Dmas->Fill(massR_K);
-  h_massR_K_Bmas->Fill(massR_K);
-
-  h_massR_Pi_Jmas->Fill(massR_Pi);
+  if( massB2 > massB_known - 60 && massB2 < massB_known + 60){
+  	h_massR_K->Fill(massR_K);
+  	h_massR_Pi->Fill(massR_Pi);
+  	
+  	h_massR_K_Dmas->Fill(massR_K);
+  	h_massR_K_Bmas->Fill(massR_K);
+  	
+  	h_massR_Pi_Jmas->Fill(massR_Pi);
+  }
 
   //5.5
    double massB3  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
    h_massB_sel2->Fill(massB3);
+   
+   
+   //MATTER or ANTIMATTER
+   
+   if(HK_Charge > 0){
+	   //matter
+	   h_massB_matter->Fill(massB3);
+   } else if (HK_Charge < 0){
+	   //antimatter
+	   h_massB_antimatter->Fill(massB3);
+   }
 }
 

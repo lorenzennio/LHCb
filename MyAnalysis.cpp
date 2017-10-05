@@ -24,9 +24,13 @@ void MyAnalysis::BookHistos() {
   h_massR_K_Dmas  = new TH1F("h_massR_K_Dmas", "", 500, 1750, 1950);
   h_massR_K_Bmas  = new TH1F("h_massR_K_Bmas", "", 100, 5200, 5400);
   h_massR_Pi_Jmas  = new TH1F("h_massR_Pi_Jmas", "", 100, 3000, 3200);
-  h_massB_sel2 = new TH1F("h_massB_sel2", "", 100, 5050,5650);
-  h_massB_matter = new TH1F("h_massB_matter", "", 100, 5050,5650);
-  h_massB_antimatter = new TH1F("h_massB_antimatter", "", 100, 5050,5650);
+  h_massB_sel2 = new TH1F("h_massB_sel2", "", 200, 5050,5650);
+  h_massB_p = new TH1F("h_massB_p", "", 200, 5050,5650);
+  h_massB_m = new TH1F("h_massB_m", "", 200, 5050,5650);
+  h_dalitz_sim = new TH2F("h_dalitz_sim","",100,0,25,100,0,25);
+  h_dalitz = new TH2F("h_dalitz","",100,-3,40,100,-3,40);
+
+  
   h_TXTY = new TH2F("h_TXTY","",100,-1,1,100,-1,1);
   // Add all histograms to a vector. This will take care of writing out histograms later on.
   v_Histos.push_back( h_PX );
@@ -42,8 +46,11 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_massR_K_Bmas );
   v_Histos.push_back( h_massR_Pi_Jmas );
   v_Histos.push_back( h_massB_sel2 );
-  v_Histos.push_back( h_massB_matter );
-  v_Histos.push_back( h_massB_antimatter );
+  v_Histos.push_back( h_massB_p );
+  v_Histos.push_back( h_massB_m );
+  v_Histos.push_back( h_dalitz_sim );
+  v_Histos.push_back( h_dalitz );
+  
   v_Histos.push_back( h_TXTY );
 }
 
@@ -108,6 +115,17 @@ void MyAnalysis::Execute() {
   double massB = invMass(H1_PX, H1_PY, H1_PZ, H2_PX, H2_PY, H2_PZ, H3_PX, H3_PY, H3_PZ, massK, massK, massK);
 
   h_massB->Fill(massB);
+  
+  //5.6 SIMULATION DALITZ
+  //if simulation data used:
+
+  double E1sim = pow((pow(H1_PX,2) + pow(H1_PY,2) + pow(H1_PZ,2) + pow(massK,2)),(0.5));
+  double E2sim = pow((pow(H2_PX,2) + pow(H2_PY,2) + pow(H2_PZ,2) + pow(massK,2)),(0.5));
+  double E3sim = pow((pow(H3_PX,2) + pow(H3_PY,2) + pow(H3_PZ,2) + pow(massK,2)),(0.5));
+  double massR_sim1 = pow((pow( E1sim + E2sim ,2) - (pow(H1_PX + H2_PX ,2) + pow(H1_PY + H2_PY,2) + pow(H1_PZ + H2_PZ,2))),(0.5));
+  double massR_sim2 = pow((pow( E1sim + E3sim ,2) - (pow(H1_PX + H3_PX ,2) + pow(H1_PY + H3_PY,2) + pow(H1_PZ + H3_PZ,2))),(0.5));
+  
+  h_dalitz_sim->Fill(pow(massR_sim1/1000, 2), pow(massR_sim2/1000, 2));
   
   //5.3 i FURTHER SELECTION
   double probK[3] = {H1_ProbK, H2_ProbK, H3_ProbK};
@@ -217,8 +235,7 @@ void MyAnalysis::Execute() {
   //5.3 ii INVARIANT MASS
   double massB2  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
   double massB_known = 5279.29; //MeV/c2
-  //apply cuts +/-60MeV/c2 around b mason mass
-  //if( massB2 < massB_known - 60 || massB2 > massB_known + 60){return;}
+  
 
   h_massB_sel->Fill(massB2);
 
@@ -239,12 +256,17 @@ void MyAnalysis::Execute() {
   }
   
   massR_Pi = pow((pow( E2+E3 ,2) - (pow(HPi1_PX + HPi2_PX ,2) + pow(HPi1_PY + HPi2_PY,2) + pow(HPi1_PZ + HPi2_PZ,2))),(0.5));
-
+	
+  //5.6 Dalitz plots
+  h_dalitz->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+  
   //cut D meson
-  if( massR_K > massD - 30 &&  massR_K < massD + 30){
+  if( massR_K > massD - 40 &&  massR_K < massD + 40){
     return;
   }
- 
+  
+  
+ //apply cuts +/-60MeV/c2 around b mason mass
   if( massB2 > massB_known - 60 && massB2 < massB_known + 60){
   	h_massR_K->Fill(massR_K);
   	h_massR_Pi->Fill(massR_Pi);
@@ -253,7 +275,9 @@ void MyAnalysis::Execute() {
   	h_massR_K_Bmas->Fill(massR_K);
   	
   	h_massR_Pi_Jmas->Fill(massR_Pi);
+	
   }
+ 
 
   //5.5
    double massB3  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
@@ -262,12 +286,13 @@ void MyAnalysis::Execute() {
    
    //MATTER or ANTIMATTER
    
-   if(HK_Charge > 0){
+   if(HK_Charge == 1){
 	   //matter
-	   h_massB_matter->Fill(massB3);
-   } else if (HK_Charge < 0){
+	   h_massB_p->Fill(massB3);
+   } else if (HK_Charge == -1){
 	   //antimatter
-	   h_massB_antimatter->Fill(massB3);
+	   h_massB_m->Fill(massB3);
    }
+   
 }
 

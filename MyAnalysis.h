@@ -30,6 +30,11 @@ class MyAnalysis {
 		TH1F           *h_massB_m;
 		TH2F           *h_dalitz_sim;
 		TH2F           *h_dalitz;
+		TH2F           *h_dalitz_cut;
+		TH2F           *h_dalitz_p;
+		TH2F           *h_dalitz_m;
+		TH2F           *h_dalitz_bgp;
+		TH2F           *h_dalitz_bgm;
 		TH2F           *h_TXTY;
 		
 

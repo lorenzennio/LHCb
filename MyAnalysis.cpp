@@ -27,9 +27,13 @@ void MyAnalysis::BookHistos() {
   h_massB_sel2 = new TH1F("h_massB_sel2", "", 200, 5050,5650);
   h_massB_p = new TH1F("h_massB_p", "", 200, 5050,5650);
   h_massB_m = new TH1F("h_massB_m", "", 200, 5050,5650);
-  h_dalitz_sim = new TH2F("h_dalitz_sim","",100,0,25,100,0,25);
-  h_dalitz = new TH2F("h_dalitz","",100,-3,40,100,-3,40);
-
+  h_dalitz_sim = new TH2F("h_dalitz_sim","",200,0,25,100,0,25);
+  h_dalitz = new TH2F("h_dalitz","",200,-3,40,100,-3,40);
+  h_dalitz_cut = new TH2F("h_dalitz_cut","",200,-3,40,100,-3,40);
+  h_dalitz_p = new TH2F("h_dalitz_p","",50,-3,40,50,-3,40);	
+  h_dalitz_m = new TH2F("h_dalitz_m","",50,-3,40,50,-3,40);
+  h_dalitz_bgp = new TH2F("h_dalitz_bgp","",50,-3,40,50,-3,40);	
+  h_dalitz_bgm = new TH2F("h_dalitz_bgm","",50,-3,40,50,-3,40);	
   
   h_TXTY = new TH2F("h_TXTY","",100,-1,1,100,-1,1);
   // Add all histograms to a vector. This will take care of writing out histograms later on.
@@ -50,6 +54,11 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_massB_m );
   v_Histos.push_back( h_dalitz_sim );
   v_Histos.push_back( h_dalitz );
+  v_Histos.push_back( h_dalitz_cut );
+  v_Histos.push_back( h_dalitz_p );
+  v_Histos.push_back( h_dalitz_m );
+  v_Histos.push_back( h_dalitz_bgp );
+  v_Histos.push_back( h_dalitz_bgm );
   
   v_Histos.push_back( h_TXTY );
 }
@@ -124,8 +133,35 @@ void MyAnalysis::Execute() {
   double E3sim = pow((pow(H3_PX,2) + pow(H3_PY,2) + pow(H3_PZ,2) + pow(massK,2)),(0.5));
   double massR_sim1 = pow((pow( E1sim + E2sim ,2) - (pow(H1_PX + H2_PX ,2) + pow(H1_PY + H2_PY,2) + pow(H1_PZ + H2_PZ,2))),(0.5));
   double massR_sim2 = pow((pow( E1sim + E3sim ,2) - (pow(H1_PX + H3_PX ,2) + pow(H1_PY + H3_PY,2) + pow(H1_PZ + H3_PZ,2))),(0.5));
+  double massR_sim3 = pow((pow( E2sim + E3sim ,2) - (pow(H2_PX + H3_PX ,2) + pow(H2_PY + H3_PY,2) + pow(H2_PZ + H3_PZ,2))),(0.5));
+  double m1sim = 0;
+  double m2sim = 0;
   
-  h_dalitz_sim->Fill(pow(massR_sim1/1000, 2), pow(massR_sim2/1000, 2));
+  if(H1_Charge + H2_Charge == 0){
+	  m1sim = massR_sim1;
+  } 
+  if(H1_Charge + H3_Charge == 0){
+	  if(m1sim == 0){
+		m1sim = massR_sim2;
+	  } else {
+	  	m2sim = massR_sim2;
+	  }
+  }
+  if(H2_Charge + H3_Charge == 0){
+  	  m2sim = massR_sim3;
+  }
+  
+  double mhigh;
+  double mlow;
+  if(m1sim < m2sim){
+  	mhigh = m2sim;
+	mlow = m1sim;
+  } else{
+    mhigh = m1sim;
+  	mlow = m2sim;
+  }
+  
+  h_dalitz_sim->Fill(pow(mhigh/1000, 2), pow(mlow/1000, 2));
   
   //5.3 i FURTHER SELECTION
   double probK[3] = {H1_ProbK, H2_ProbK, H3_ProbK};
@@ -287,12 +323,37 @@ void MyAnalysis::Execute() {
    //MATTER or ANTIMATTER
    
    if(HK_Charge == 1){
-	   //matter
+	   //B+
 	   h_massB_p->Fill(massB3);
    } else if (HK_Charge == -1){
-	   //antimatter
+	   //B-
 	   h_massB_m->Fill(massB3);
    }
    
+   
+   //5.6 Dalitz plots
+   //apply signal cut
+   if( massB2 > 5.28437e+03 - 40 && massB2 < 5.28437e+03 + 40){
+   h_dalitz_cut->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+   
+   	if(HK_Charge == 1){
+   		   //B+
+   		   h_dalitz_p->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+   	} else if (HK_Charge == -1){
+   		   //B-
+   		   h_dalitz_m->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+   	}
+   
+   }
+   //backgrounds
+   if( massB2 > 5350 && massB2 < 5430){
+      	if(HK_Charge == 1){
+      		   //B+
+      		   h_dalitz_bgp->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+      	} else if (HK_Charge == -1){
+      		   //B-
+      		   h_dalitz_bgm->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
+      	}
+   }
 }
 

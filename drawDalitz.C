@@ -22,11 +22,22 @@ void drawDalitz() {
 	
 	
 	//Dalitz plot for complete data
+	//variable bin width
+	const Int_t xNBINS = 20;
+   	Double_t xedges[xNBINS + 1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3., 3.5, 4., 5., 6., 7., 8., 10., 12., 15., 18., 21., 25., 30., 35.};
+	const Int_t yNBINS = 20;
+   	Double_t yedges[yNBINS + 1] = {0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3., 3.5, 4., 5., 6., 7., 8., 10., 12., 15., 18., 21., 25., 30., 35.};
+   	// Bin 1 corresponds to range [0.0, 0.2]
+   	// Bin 2 corresponds to range [0.2, 0.3] etc...
+	
+	
 	TH2F *hdalitz = (TH2F*)ft->Get("h_dalitz");
     TCanvas *c2 = new TCanvas("c2","",600,400);
     hdalitz->SetStats(0);
     hdalitz->GetXaxis()->SetTitle("Mass_{K#pi}^{2} [GeV^{2}/c^{4}]");
+	hdalitz->GetXaxis()->SetRange(-3, 40);
     hdalitz->GetYaxis()->SetTitle("Mass_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+	hdalitz->GetYaxis()->SetRange(-3, 40);
     hdalitz->Draw("colz");                          // draw with a colour scale
     c2->SaveAs("dalitz.pdf");
 	
@@ -60,8 +71,10 @@ void drawDalitz() {
 	
 	hdalitzp->Add(hdalitzbgp, -1);
 	
-	for(int k = 0; k < 50; k++){
-		for(int l = 0; l < 50; l++){
+	int bin = 40;
+	
+	for(int k = 0; k < bin; k++){
+		for(int l = 0; l < bin; l++){
 			if(hdalitzp->GetBinContent(k, l) < 0){
 				hdalitzp->SetBinContent(k, l, 0);
 			}
@@ -91,8 +104,8 @@ void drawDalitz() {
 	
 	hdalitzm->Add(hdalitzbgm, -1);
 	
-	for(int i = 0; i < 50; i++){
-		for(int j = 0; j < 50; j++){
+	for(int i = 0; i < bin; i++){
+		for(int j = 0; j < bin; j++){
 			if(hdalitzm->GetBinContent(i, j) < 0){
 				hdalitzm->SetBinContent(i, j, 0);
 			}
@@ -152,8 +165,8 @@ void drawDalitz() {
 	hdalitzass->Sumw2();
 	
 	double err;
-	for(int a = 0; a < 50; a++){
-		for(int b = 0; b < 50; b++){
+	for(int a = 0; a < bin; a++){
+		for(int b = 0; b < bin; b++){
 			err = pow((1-pow(hdalitzass->GetBinContent(a,b), 2)) / hdalitzadd->GetBinContent(a,b), 0.5);
 			hdalitzass_err->SetBinContent(a, b, err);
 		}
@@ -181,8 +194,8 @@ void drawDalitz() {
 	
 	TH2F *hdalitzass_corr = (TH2F*) hdalitzass->Clone();
 	hdalitzass_corr->Sumw2();
-	for(int o = 0; o < 50; o++){
-		for(int p = 0; p < 50; p++){
+	for(int o = 0; o < bin; o++){
+		for(int p = 0; p < bin; p++){
 			if(abs(hdalitzsig->GetBinContent(o,p)) < 1.){
 				hdalitzass_corr->SetBinContent(o,p, 0);
 			}

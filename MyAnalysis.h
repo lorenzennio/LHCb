@@ -28,6 +28,7 @@ class MyAnalysis {
 		TH1F           *h_massB_sel2;
 		TH1F           *h_massB_p;
 		TH1F           *h_massB_m;
+		TH1F           *h_CP_massB;
 		TH1F           *h_CP_massB_p;
 		TH1F           *h_CP_massB_m;
 		TH2F           *h_dalitz_sim;

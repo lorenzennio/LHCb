@@ -8,6 +8,8 @@
 
 using namespace std;
 
+int N = 0;
+
 void MyAnalysis::BookHistos() {
   // This function is only called once at the start of the program.
   // Book your histograms here. The format is object_name, histogram_name, number_of_bins, minimum, maximum
@@ -27,8 +29,9 @@ void MyAnalysis::BookHistos() {
   h_massB_sel2 = new TH1F("h_massB_sel2", "", 200, 5050,5650);
   h_massB_p = new TH1F("h_massB_p", "", 200, 5050,5650);
   h_massB_m = new TH1F("h_massB_m", "", 200, 5050,5650);
-  h_CP_massB_p = new TH1F("h_CP_massB_p", "", 50, 5050,5650);
-  h_CP_massB_m = new TH1F("h_CP_massB_m", "", 50, 5050,5650);
+  h_CP_massB = new TH1F("h_CP_massB", "", 65, 5020,5700);
+  h_CP_massB_p = new TH1F("h_CP_massB_p", "", 65, 5020,5700);
+  h_CP_massB_m = new TH1F("h_CP_massB_m", "", 65, 5020,5700);
   
 //variable bin width
   const Int_t xNBINS = 11;
@@ -66,6 +69,7 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_massB_sel2 );
   v_Histos.push_back( h_massB_p );
   v_Histos.push_back( h_massB_m );
+  v_Histos.push_back( h_CP_massB );
   v_Histos.push_back( h_CP_massB_p );
   v_Histos.push_back( h_CP_massB_m );
   v_Histos.push_back( h_dalitz_sim );
@@ -108,7 +112,14 @@ void MyAnalysis::Execute() {
   // Call the Cut function to decide whether to plot this event or not
   // it returns if the cut function returns false
   if ( !Cut() ) return;
-
+  /*
+  if(N%2 == 0){
+    N++;
+	  return;
+  }
+  N++;
+  */
+  //cout << "even";
   // Fill your histograms below.
   // fill the momentum of all three particles 
   h_PX->Fill( H1_PX );
@@ -208,7 +219,9 @@ void MyAnalysis::Execute() {
   }
   
   //check if we have a muon
-  if( H1_isMuon == 1 || H2_isMuon == 1 || H3_isMuon == 1){ return;}
+  if( H1_isMuon == 1 || H2_isMuon == 1 || H3_isMuon == 1){
+	  return;
+  }
   
   //Variable reasignment
   double HK_PX;
@@ -381,7 +394,8 @@ void MyAnalysis::Execute() {
    
    //pick region from dalitz plot and make three body 
    
-   if((pow(massR_K/1000., 2) > 0 && pow(massR_K/1000., 2) < 15) && (pow(massR_Pi/1000., 2) > 0 && pow(massR_Pi/1000., 2) < 0.6)){
+   if((pow(massR_K/1000., 2) > 1.2 && pow(massR_K/1000., 2) < 15) && (pow(massR_Pi/1000., 2) > 0 && pow(massR_Pi/1000., 2) < 0.6)){
+	   h_CP_massB->Fill(massB2);
 	   
 	   if(HK_Charge == 1){
 		   //B+

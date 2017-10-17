@@ -331,9 +331,15 @@ for(int i = 0; i < 30; i++){
 TCanvas *c6 = new TCanvas("c6","",600,400);
 // Draw the first histogram with a blue line, and an x-axis title
 gStyle->SetOptStat("e");
+gStyle->SetOptFit(1111);
 gStyle->SetStatFormat("6.6g");
 sign->SetLineColor(kBlue);
 sign->GetXaxis()->SetTitle("Significance");
+sign->GetYaxis()->SetTitle("Bin Number");
+
+TF1 *bellc = new TF1("bellc", "gausn", -3, 3);
+sign->Fit(bellc, "ROME");
+
 sign->Draw("E1");
 c6->SaveAs("UpDownsig1D.pdf");
 }

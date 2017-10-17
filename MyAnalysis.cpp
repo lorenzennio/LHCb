@@ -32,14 +32,17 @@ void MyAnalysis::BookHistos() {
   h_CP_massB = new TH1F("h_CP_massB", "", 65, 5020,5700);
   h_CP_massB_p = new TH1F("h_CP_massB_p", "", 65, 5020,5700);
   h_CP_massB_m = new TH1F("h_CP_massB_m", "", 65, 5020,5700);
-  h_muon = new TH1F("h_muon", "", 200, 5050,5650);
-  h_muon_p = new TH1F("h_muon_p", "", 200, 5050,5650);
-  h_moun_m = new TH1F("h_moun_m", "", 200, 5050,5650);
+  h_CP_massB2 = new TH1F("h_CP_massB2", "", 65, 5020,5700);
+  h_CP_massB2_p = new TH1F("h_CP_massB2_p", "", 65, 5020,5700);
+  h_CP_massB2_m = new TH1F("h_CP_massB2_m", "", 65, 5020,5700);
+  h_muon =   new TH1F("h_muon", "",   65, 2900,3300);
+  h_muon_p = new TH1F("h_muon_p", "", 65, 2900,3300);
+  h_muon_m = new TH1F("h_muon_m", "", 65, 2900,3300);
 
   
 //variable bin width
-  const Int_t xNBINS = 11;
-  Double_t xedges[xNBINS + 1] = {0.2, 0.6, 0.8, 1., 1.2, 1.8, 2.4, 3. , 7., 15., 21., 28.};
+  const Int_t xNBINS = 12;
+  Double_t xedges[xNBINS + 1] = {0.2, 0.6, 0.8, 1., 1.2, 1.8, 2.4, 3. , 7., 15., 21., 25., 28.};
   const Int_t yNBINS = 12;
   Double_t yedges[yNBINS + 1] = {0., 0.6, 0.9, 1., 1.2, 1.8, 3. , 7., 10., 12.,  15.,  21., 28.};
 //{0.0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.7, 2.0, 2.5, 3., 3.5, 4., 5., 6., 7., 8., 10., 12., 15., 18., 21., 25., 30., 35.};
@@ -76,6 +79,9 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_CP_massB );
   v_Histos.push_back( h_CP_massB_p );
   v_Histos.push_back( h_CP_massB_m );
+  v_Histos.push_back( h_CP_massB2 );
+  v_Histos.push_back( h_CP_massB2_p );
+  v_Histos.push_back( h_CP_massB2_m );
   v_Histos.push_back( h_muon );
   v_Histos.push_back( h_muon_p );
   v_Histos.push_back( h_muon_m );
@@ -306,14 +312,19 @@ void MyAnalysis::Execute() {
   
   //check if we have a muon
   if( H1_isMuon == 1 || H2_isMuon == 1 || H3_isMuon == 1){
-   h_muon->Fill(massB2);
+   double E2 = pow((pow(HPi1_PX,2) + pow(HPi1_PY,2) + pow(HPi1_PZ,2) + pow(massPi,2)),(0.5));
+   double E3 = pow((pow(HPi2_PX,2) + pow(HPi2_PY,2) + pow(HPi2_PZ,2) + pow(massPi,2)),(0.5));
+   double massJPsi = pow((pow( E2+E3 ,2) - (pow(HPi1_PX + HPi2_PX ,2) + pow(HPi1_PY + HPi2_PY,2) + pow(HPi1_PZ + HPi2_PZ,2))),(0.5));
+   h_muon->Fill(massJPsi);
    
    if(HK_Charge == 1){
 	   //B+
-	   h_muon_p->Fill(massB2);
+	   h_muon_p->Fill(massJPsi);
+	   
    } else if (HK_Charge == -1){
 	   //B-
-	   h_muon_m->Fill(massB2);
+	   h_muon_m->Fill(massJPsi);
+	   
    }
 	  
 	return;
@@ -413,7 +424,7 @@ void MyAnalysis::Execute() {
    
    //pick region from dalitz plot and make three body 
    
-   if((pow(massR_K/1000., 2) > 1.2 && pow(massR_K/1000., 2) < 15) && (pow(massR_Pi/1000., 2) > 0 && pow(massR_Pi/1000., 2) < 0.6)){
+   if((pow(massR_K/1000., 2) >= 1.2 && pow(massR_K/1000., 2) <= 15) && (pow(massR_Pi/1000., 2) >= 0 && pow(massR_Pi/1000., 2) <= 0.6)){
 	   h_CP_massB->Fill(massB2);
 	   
 	   if(HK_Charge == 1){
@@ -422,6 +433,23 @@ void MyAnalysis::Execute() {
 	   } else if (HK_Charge == -1){
 		   //B-
 		   h_CP_massB_m->Fill(massB2);
+	   }
+	
+   }
+   
+   //pick region from dalitz plot and make three body 
+   
+   if((pow(massR_K/1000., 2) >= 21. && pow(massR_K/1000., 2) <= 25.) && (pow(massR_Pi/1000., 2) >= 1.2 && pow(massR_Pi/1000., 2) <= 3.)){
+	   h_CP_massB2->Fill(massB2);
+	   
+	   if(HK_Charge == 1){
+		   //B+
+		   h_CP_massB2_p->Fill(massB2);
+		   //cout << "+";
+	   } else if (HK_Charge == -1){
+		   //B-
+		   h_CP_massB2_m->Fill(massB2);
+		   //cout << "-";
 	   }
 	
    }

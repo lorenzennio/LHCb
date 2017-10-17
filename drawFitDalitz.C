@@ -258,6 +258,7 @@ void drawFitDalitz() {
   double A = (Nm-Np)/(Nm+Np);
   
   double Aerr = pow(((1-pow(A,2))/(Nm+Np)),0.5);
+  double Aerr2 = (2/pow(Np+Nm, 2))*pow((pow(Np*Atotal->GetParError(0)/scale,2) + pow(Nm*Mtotal->GetParError(0)/scale,2)), 0.5);
   
   cout << "scale " << scale << "\n";
   cout << "Mparfinal[0]: " << Mparfinal[0] << "\n";
@@ -266,7 +267,7 @@ void drawFitDalitz() {
   cout << "Aparfinal[2]: " << Aparfinal[2] << "\n";
   cout << "Np: " << Np << "\n";
   cout << "Nm: " << Nm << "\n";
-  cout << "\n\n\nCP Assymetry: " << A<< "+/-"<< Aerr <<"\n\n\n";
+  cout << "\n\n\nCP Assymetry: " << A<< "+/-"<< Aerr <<"+/-"<< Aerr2 <<"\n\n\n";
   
   
   //DALITZ-----------------------------------------------------------------------------
@@ -779,13 +780,288 @@ void drawFitDalitz() {
   double A_CP = (Nm_CP-Np_CP)/(Nm_CP+Np_CP);
   
   double Aerr_CP = pow(((1-pow(A_CP,2))/(Nm_CP+Np_CP)),0.5);
+  double Aerr2_CP = (2/pow(Np_CP+Nm_CP, 2))*pow((pow(Np_CP*Atotal_CP->GetParError(0)/scale,2) + pow(Nm_CP*Mtotal_CP->GetParError(0)/scale_CP,2)), 0.5);
   
   cout << "scale " << scale_CP << "\n";
   cout << "Mparfinal_CP[0]: " << Mparfinal_CP[0] << "\n";
   cout << "Aparfinal_CP[0]: " << Aparfinal_CP[0] << "\n";
   cout << "Np: " << Np_CP << "\n";
   cout << "Nm: " << Nm_CP << "\n";
-  cout << "\nCP Asymmetry: " << A_CP<< "+/-"<< Aerr_CP <<"\n\n\n";
+  cout << "\nCP Asymmetry: " << A_CP<< "+/-"<< Aerr_CP << "+/-"<< Aerr2_CP << "\n\n\n";
   
+  
+  //specified region TWO 3 body ----------------------------------
+  //B TOTAL---------------------------------------------
+
+  TH1F *hmass_CP2 = (TH1F*)ft->Get("h_CP_massB2");
+
+  // Create a canvas onto which the histograms are plotted and which can be saved
+  TCanvas *c17 = new TCanvas("c17","",600,400);
+  // Draw the first histogram with a blue line, and an x-axis title
+  gStyle->SetOptStat("e");
+  gStyle->SetOptFit(1111);
+  gStyle->SetStatFormat("6.6g");
+  
+  cout << "\n bin: "<< hmass_CP2->GetBinContent(6) << "\n";
+  
+  for (int x; x < 65; x++){
+	  cout << "\n bin: "<< hmass_CP2->GetBinContent(x) << "\n";
+  }
+  
+  hmass_CP2->SetLineColor(kBlue);
+  hmass_CP2->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  
+
+  //fit
+  //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
+  TF1 *Signal_CP2 = new TF1("Signal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
+  TF1 *Background_CP2 = new TF1("Background_CP2", "expo", 5279.29+80, 5700 );
+  TF1 *CombBG_CP2 = new TF1("CombBG_CP2", "gausn", 5035, 5279.29-80);
+  TF1 *total_CP2 = new TF1("total_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  
+  hmass_CP2->Fit(Signal_CP2, "R");
+  hmass_CP2->Fit(Background_CP2, "RN+");
+  hmass_CP2->Fit(CombBG_CP2, "RN+");
+  
+  
+  Double_t par_CP2[8];
+  Signal_CP2->GetParameters(&par_CP2[0]);
+  Background_CP2->GetParameters(&par_CP2[3]);
+  CombBG_CP2->GetParameters(&par_CP2[5]);
+	
+  total_CP2->SetParameters(par_CP2);
+  hmass_CP2->Fit(total_CP2, "ROME");
+	
+  
+  Double_t parfinal_CP2[8];
+  total_CP2->GetParameters(parfinal_CP2);
+  
+  total_CP2->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
+	  
+  
+  TF1 *DrawSignal_CP2 = new TF1("DrawSignal_CP2", "gausn", 5035 ,5700);
+  TF1 *DrawBackground_CP2 = new TF1("DrawBackground_CP2", "expo", 5035 ,5700);
+  TF1 *DrawCombBG_CP2 = new TF1("DrawCombBG_CP2", "gausn", 5035 ,5700);
+  DrawSignal_CP2->SetParameters(&parfinal_CP2[0]);
+  DrawBackground_CP2->SetParameters(&parfinal_CP2[3]);
+  DrawCombBG_CP2->SetParameters(&parfinal_CP2[5]);
+  
+  TH1F *subtracted_CP2 = new TH1F(*hmass_CP2);
+  subtracted_CP2->Add(DrawBackground_CP2, -1);
+  subtracted_CP2->Add(DrawCombBG_CP2, -1);
+  
+  hmass_CP2->Draw("E1");
+          
+  hmass_CP2->SetAxisRange(5090, 5500., "X");
+  hmass_CP2->SetAxisRange(-2., 150., "Y");
+          
+  total_CP2->Draw("same");
+  total_CP2->SetLineColor(2);
+  total_CP2->SetLineWidth(2);
+  
+  DrawSignal_CP2->Draw("same");
+  DrawSignal_CP2->SetLineColor(8);
+  DrawSignal_CP2->SetLineWidth(2);
+   
+  DrawBackground_CP2->Draw("same");
+  DrawBackground_CP2->SetLineColor(6);
+  DrawBackground_CP2->SetLineWidth(1);
+  
+  DrawCombBG_CP2->Draw("same");
+  DrawCombBG_CP2->SetLineColor(38);
+  DrawCombBG_CP2->SetLineWidth(1);
+  
+  //Msubtracted_CP2->Draw("same");
+  
+  
+  c17->SaveAs("CP_massB2.pdf");
+  
+  //B PLUS---------------------------------------------
+  //p = plus = M
+  TH1F *hmass_CP2_p = (TH1F*)ft->Get("h_CP_massB2_p");
+
+  // Create a canvas onto which the histograms are plotted and which can be saved
+  TCanvas *c18 = new TCanvas("c18","",600,400);
+  // Draw the first histogram with a blue line, and an x-axis title
+  gStyle->SetOptStat("e");
+  gStyle->SetOptFit(1111);
+  gStyle->SetStatFormat("6.6g");
+  
+  hmass_CP2_p->SetLineColor(kBlue);
+  hmass_CP2_p->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  
+
+  //fit
+  //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
+  TF1 *MSignal_CP2 = new TF1("MSignal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
+  TF1 *MBackground_CP2 = new TF1("MBackground_CP2", "expo", 5279.29+80, 5700 );
+  TF1 *MCombBG_CP2 = new TF1("MCombBG_CP2", "gausn", 5035, 5279.29-80);
+  TF1 *Mtotal_CP2 = new TF1("Mtotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  
+  MSignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
+  MSignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
+  
+  hmass_CP2_p->Fit(MSignal_CP2, "RNB");
+  hmass_CP2_p->Fit(MBackground_CP2, "RN+");
+  hmass_CP2_p->Fit(MCombBG_CP2, "RN+");
+  
+  
+  Double_t Mpar_CP2[8];
+  MSignal_CP2->GetParameters(&Mpar_CP2[0]);
+  MBackground_CP2->GetParameters(&Mpar_CP2[3]);
+  MCombBG_CP2->GetParameters(&Mpar_CP2[5]);
+  	
+  //Mpar_CP[2] = abs(Mpar_CP[2]);
+  cout << "mean2 " << Mpar_CP2[1] << "\n";
+  cout << "sigma2 " << Mpar_CP2[2] << "\n";
+  Mtotal_CP2->SetParameters(Mpar_CP2);
+  Mtotal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
+  Mtotal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
+  Mtotal_CP2->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
+  hmass_CP2_p->Fit(Mtotal_CP2, "ROMEB");
+	
+  
+  Double_t Mparfinal_CP2[8];
+  Mtotal_CP2->GetParameters(Mparfinal_CP2);
+  
+  Mtotal_CP2->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
+	  
+  
+  TF1 *MDrawSignal_CP2 = new TF1("MDrawSignal_CP2", "gausn", 5035 ,5700);
+  TF1 *MDrawBackground_CP2 = new TF1("MDrawBackground_CP2", "expo", 5035 ,5700);
+  TF1 *MDrawCombBG_CP2 = new TF1("MDrawCombBG_CP2", "gausn", 5035 ,5700);
+  MDrawSignal_CP2->SetParameters(&Mparfinal_CP2[0]);
+  MDrawBackground_CP2->SetParameters(&Mparfinal_CP2[3]);
+  MDrawCombBG_CP2->SetParameters(&Mparfinal_CP2[5]);
+  
+  TH1F *Msubtracted_CP2 = new TH1F(*hmass_CP2_p);
+  Msubtracted_CP2->Add(MDrawBackground_CP2, -1);
+  Msubtracted_CP2->Add(MDrawCombBG_CP2, -1);
+  
+  hmass_CP2_p->Draw("E1");
+  
+  hmass_CP2_p->SetAxisRange(5090, 5500., "X");
+  hmass_CP2_p->SetAxisRange(-2., 90., "Y");
+  
+  Mtotal_CP2->Draw("same");
+  Mtotal_CP2->SetLineColor(2);
+  Mtotal_CP2->SetLineWidth(2);
+  
+  MDrawSignal_CP2->Draw("same");
+  MDrawSignal_CP2->SetLineColor(8);
+  MDrawSignal_CP2->SetLineWidth(2);
+   
+  MDrawBackground_CP2->Draw("same");
+  MDrawBackground_CP2->SetLineColor(6);
+  MDrawBackground_CP2->SetLineWidth(1);
+  
+  MDrawCombBG_CP2->Draw("same");
+  MDrawCombBG_CP2->SetLineColor(38);
+  MDrawCombBG_CP2->SetLineWidth(1);
+  
+  //Msubtracted_CP2->Draw("same");
+  
+  
+  c18->SaveAs("CP_massB2_p.pdf");
+
+  //B MINUS---------------------------------------------
+  //m = minus = A
+  TH1F *hmass_CP2_m = (TH1F*)ft->Get("h_CP_massB2_m");
+  
+  // Create a canvas onto which the histograms are plotted and which can be saved
+  TCanvas *c19 = new TCanvas("c19","",600,400);
+  // Draw the first histogram with a blue line, and an x-axis title
+  gStyle->SetOptStat("e");
+  gStyle->SetOptFit(1111);
+  gStyle->SetStatFormat("6.6g");
+  
+  hmass_CP2_m->SetLineColor(kBlue);
+  hmass_CP2_m->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  
+
+  //fit
+ 
+  TF1 *ASignal_CP2 = new TF1("ASignal_CP2", "gausn", 5279.29-40 ,5279.29+50);
+  TF1 *ABackground_CP2 = new TF1("ABackground_CP2", "expo", 5279.29+80, 5700 );
+  TF1 *ACombBG_CP2 = new TF1("ACombBG_CP2", "gaus", 5035, 5279.29-80);
+  TF1 *Atotal_CP2 = new TF1("Atotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  
+  ASignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
+  ASignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
+  
+
+  hmass_CP2_m->Fit(ASignal_CP2, "RNB");
+  hmass_CP2_m->Fit(ABackground_CP2, "RN+");
+  hmass_CP2_m->Fit(ACombBG_CP2, "RN+");
+  
+  Double_t Apar_CP2[8];
+  ASignal_CP2->GetParameters(&Apar_CP2[0]);
+  ABackground_CP2->GetParameters(&Apar_CP2[3]);
+  ACombBG_CP2->GetParameters(&Apar_CP2[5]);
+
+  Atotal_CP2->SetParameters(Apar_CP);
+  Atotal_CP2->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
+  Atotal_CP2->SetParLimits(2, parfinal_CP[2]-2*total_CP->GetParError(2), parfinal_CP[2]+2*total_CP->GetParError(2));
+  hmass_CP2_m->Fit(Atotal_CP2, "ROMEB");
+	
+  
+  Double_t Aparfinal_CP2[8];
+  Atotal_CP2->GetParameters(Aparfinal_CP2);
+  
+  Mtotal_CP2->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
+	  
+  
+  TF1 *ADrawSignal_CP2 = new TF1("ADrawSignal_CP2", "gausn", 5035 ,5700);
+  TF1 *ADrawBackground_CP2 = new TF1("ADrawBackground_CP2", "expo", 5035 ,5700);
+  TF1 *ADrawCombBG_CP2 = new TF1("ADrawCombBG_CP2", "gausn", 5035 ,5700);
+  ADrawSignal_CP2->SetParameters(&Aparfinal_CP2[0]);
+  ADrawBackground_CP2->SetParameters(&Aparfinal_CP2[3]);
+  ADrawCombBG_CP2->SetParameters(&Aparfinal_CP2[5]);
+  
+  TH1F *Asubtracted_CP2 = new TH1F(*hmass_CP2_m);
+  Asubtracted_CP2->Add(ADrawBackground_CP2, -1);
+  Asubtracted_CP2->Add(ADrawCombBG_CP2, -1);
+  
+  hmass_CP2_m->Draw("E1");
+  
+  hmass_CP2_m->SetAxisRange(5090, 5500., "X");
+  hmass_CP2_m->SetAxisRange(-2., 90., "Y");
+  
+  Atotal_CP2->Draw("same");
+  Atotal_CP2->SetLineColor(2);
+  Atotal_CP2->SetLineWidth(2);
+  
+  ADrawSignal_CP2->Draw("same");
+  ADrawSignal_CP2->SetLineColor(8);
+  ADrawSignal_CP2->SetLineWidth(2);
+   
+  ADrawBackground_CP2->Draw("same");
+  ADrawBackground_CP2->SetLineColor(6);
+  ADrawBackground_CP2->SetLineWidth(1);
+  
+  ADrawCombBG_CP2->Draw("same");
+  ADrawCombBG_CP2->SetLineColor(38);
+  ADrawCombBG_CP2->SetLineWidth(1);
+  
+  //Asubtracted_CP->Draw("same");
+  
+  
+  c19->SaveAs("CP_massB2_m.pdf");
+  
+  //CP ASSYMETRY
+  double scale_CP2 = hmass_CP->GetXaxis()->GetBinWidth(1);
+  double Np_CP2 = Mparfinal_CP2[0]/scale;
+  double Nm_CP2 = Aparfinal_CP2[0]/scale;
+  double A_CP2 = (Nm_CP2-Np_CP2)/(Nm_CP2+Np_CP2);
+  
+  double Aerr_CP2 = pow(((1-pow(A_CP2,2))/(Nm_CP2+Np_CP2)),0.5);
+  double Aerr2_CP2 = (2/pow(Np_CP2+Nm_CP2, 2))*pow((pow(Np_CP2*Atotal_CP2->GetParError(0)/scale,2) + pow(Nm_CP2*Mtotal_CP2->GetParError(0)/scale_CP2,2)), 0.5);
+  
+  cout << "scale " << scale_CP2 << "\n";
+  cout << "Mparfinal_CP[0]: " << Mparfinal_CP2[0] << "\n";
+  cout << "Aparfinal_CP[0]: " << Aparfinal_CP2[0] << "\n";
+  cout << "Np: " << Np_CP2 << "\n";
+  cout << "Nm: " << Nm_CP2 << "\n";
+  cout << "\nCP Asymmetry: " << A_CP2<< "+/-"<< Aerr_CP2 <<"+/-"<< Aerr2_CP2 <<"\n\n\n";
 }
 

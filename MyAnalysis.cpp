@@ -32,6 +32,10 @@ void MyAnalysis::BookHistos() {
   h_CP_massB = new TH1F("h_CP_massB", "", 65, 5020,5700);
   h_CP_massB_p = new TH1F("h_CP_massB_p", "", 65, 5020,5700);
   h_CP_massB_m = new TH1F("h_CP_massB_m", "", 65, 5020,5700);
+  h_muon = new TH1F("h_muon", "", 200, 5050,5650);
+  h_muon_p = new TH1F("h_muon_p", "", 200, 5050,5650);
+  h_moun_m = new TH1F("h_moun_m", "", 200, 5050,5650);
+
   
 //variable bin width
   const Int_t xNBINS = 11;
@@ -72,6 +76,9 @@ void MyAnalysis::BookHistos() {
   v_Histos.push_back( h_CP_massB );
   v_Histos.push_back( h_CP_massB_p );
   v_Histos.push_back( h_CP_massB_m );
+  v_Histos.push_back( h_muon );
+  v_Histos.push_back( h_muon_p );
+  v_Histos.push_back( h_muon_m );
   v_Histos.push_back( h_dalitz_sim );
   v_Histos.push_back( h_dalitz );
   v_Histos.push_back( h_dalitz_cut );
@@ -218,10 +225,6 @@ void MyAnalysis::Execute() {
     return;
   }
   
-  //check if we have a muon
-  if( H1_isMuon == 1 || H2_isMuon == 1 || H3_isMuon == 1){
-	  return;
-  }
   
   //Variable reasignment
   double HK_PX;
@@ -301,6 +304,21 @@ void MyAnalysis::Execute() {
   double massB2  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
   double massB_known = 5279.29; //MeV/c2
   
+  //check if we have a muon
+  if( H1_isMuon == 1 || H2_isMuon == 1 || H3_isMuon == 1){
+   h_muon->Fill(massB2);
+   
+   if(HK_Charge == 1){
+	   //B+
+	   h_muon_p->Fill(massB2);
+   } else if (HK_Charge == -1){
+	   //B-
+	   h_muon_m->Fill(massB2);
+   }
+	  
+	return;
+  }
+  
 
   h_massB_sel->Fill(massB2);
 
@@ -322,6 +340,7 @@ void MyAnalysis::Execute() {
   
   massR_Pi = pow((pow( E2+E3 ,2) - (pow(HPi1_PX + HPi2_PX ,2) + pow(HPi1_PY + HPi2_PY,2) + pow(HPi1_PZ + HPi2_PZ,2))),(0.5));
 	
+
   
   //5.6 Dalitz plots
   h_dalitz->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));

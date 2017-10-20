@@ -1,0 +1,52 @@
+For complete data
+all: 	-0.0313012+/-0.00870571
+down: 	-0.0234838+/-0.0114374
+up: 	-0.0449274+/-0.0133808
+
+Data set with least nr of events is DataMagnetUp with 3420294 events - so use 3420294 events from each data set
+
+Split up every data set according to odd/even index
+			global				  		diff							local
+                                  							
+1 down:		-0.0315128+/-0.0200385		0.0118504+/-0.0281211			0.762722+/-0.053899
+2 down:		-0.0196624+/-0.0197295										0.662554+/-0.0543862
+                                  							
+1 up  :		-0.0608629+/-0.0187701		0.0477335+/-0.0267976			0.256482+/-0.0664007
+2 up  :		-0.0131294+/-0.0191258							
+
+
+This suggests that the statistical uncertainty dominates over the systematic uncertainty of magnet up/down.
+
+
+-------------------------------------------
+
+
+Changing fits
+
+4 body BG 	comb. BG 	signal		chi2 p		chi2m		A
+gausn		exp			gausn		211/192		229/192		-0.0313012+/-0.00870571+/-0.0125372
+gausn		pol1		gausn		211/192		229/192		-0.0254383+/-0.00867797+/-0.0128256
+landau		pol1		gausn		214/192		225/192		-0.0146673+/-0.00874679+/-0.0120383
+landau		exp			gausn		214/192		225/192		-0.0144338+/-0.00874727+/-0.0113202
+any			any			landau		--			--			--
+
+
+local region 1
+4 body BG 	comb. BG 	signal		chi2 p		chi2 m		A
+gausn		exp			gausn		44/56		83/56		0.675533+/-0.031468+/-0.0540506
+gausn		pol1		gausn		44/56		75/56		0.753391+/-0.0244278+/-0.0426108
+landau		pol1		gausn		46/56		77/56		0.810294+/-0.0239526+/-0.040638
+landau		exp			gausn		46/56		78/56		0.820278+/-0.0241542+/-0.0348778
+any			any			landau		--			--			--
+
+
+local region 2
+4 body BG 	comb. BG 	signal		chi2 p		chi2 m		A
+gausn		exp			gausn		75/56		63/56		-0.253856+/-0.0259087+/-0.0611534
+gausn		pol1		gausn		66/56		69/56		-0.296284+/-0.0264822+/-0.0717751
+landau		pol1		gausn		68/56		76/56		-0.235093+/-0.0259281+/-0.0614498
+landau		exp			gausn		82/56		76/56		-0.297835+/-0.0245887+/-0.0573224 
+any			any			landau		
+
+
+

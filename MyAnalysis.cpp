@@ -35,9 +35,9 @@ void MyAnalysis::BookHistos() {
   h_CP_massB2 = new TH1F("h_CP_massB2", "", 65, 5020,5700);
   h_CP_massB2_p = new TH1F("h_CP_massB2_p", "", 65, 5020,5700);
   h_CP_massB2_m = new TH1F("h_CP_massB2_m", "", 65, 5020,5700);
-  h_muon =   new TH1F("h_muon", "",   65, 2900,3300);
-  h_muon_p = new TH1F("h_muon_p", "", 65, 2900,3300);
-  h_muon_m = new TH1F("h_muon_m", "", 65, 2900,3300);
+  h_muon =   new TH1F("h_muon", "",   1000, 2800,3400);
+  h_muon_p = new TH1F("h_muon_p", "", 1000, 2800,3400);
+  h_muon_m = new TH1F("h_muon_m", "", 1000, 2800,3400);
 
   
 //variable bin width
@@ -47,8 +47,8 @@ void MyAnalysis::BookHistos() {
   Double_t yedges[yNBINS + 1] = {0., 0.6, 0.9, 1., 1.2, 1.8, 3. , 7., 10., 12.,  15.,  21., 28.};
 //{0.0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.7, 2.0, 2.5, 3., 3.5, 4., 5., 6., 7., 8., 10., 12., 15., 18., 21., 25., 30., 35.};
   h_dalitz_sim = new TH2F("h_dalitz_sim","",200,0,25,200,0,25);
-  h_dalitz = new TH2F("h_dalitz","",200,-3,40,200,-3,40);
-  h_dalitz_cut = new TH2F("h_dalitz_cut","",200,-3,40,200,-3,40);
+  h_dalitz = new TH2F("h_dalitz","",200,-3,35,200,-3,35);
+  h_dalitz_cut = new TH2F("h_dalitz_cut","",200,-3,35,200,-3,35);
   //h_dalitz_p = new TH2F("h_dalitz_p","",    40,-3,40,40,-3,40);	
   //h_dalitz_m = new TH2F("h_dalitz_m","",    40,-3,40,40,-3,40);
   //h_dalitz_bgp = new TH2F("h_dalitz_bgp","",40,-3,40,40,-3,40);	
@@ -315,19 +315,21 @@ void MyAnalysis::Execute() {
    double E2 = pow((pow(HPi1_PX,2) + pow(HPi1_PY,2) + pow(HPi1_PZ,2) + pow(massPi,2)),(0.5));
    double E3 = pow((pow(HPi2_PX,2) + pow(HPi2_PY,2) + pow(HPi2_PZ,2) + pow(massPi,2)),(0.5));
    double massJPsi = pow((pow( E2+E3 ,2) - (pow(HPi1_PX + HPi2_PX ,2) + pow(HPi1_PY + HPi2_PY,2) + pow(HPi1_PZ + HPi2_PZ,2))),(0.5));
-   h_muon->Fill(massJPsi);
-   
-   if(HK_Charge == 1){
-	   //B+
-	   h_muon_p->Fill(massJPsi);
-	   
-   } else if (HK_Charge == -1){
-	   //B-
-	   h_muon_m->Fill(massJPsi);
-	   
+   if(massJPsi > 3050 && massJPsi < 3150){
+   	h_muon->Fill(massJPsi);
+   	
+   	if(HK_Charge == 1){
+   		   //B+
+   		   h_muon_p->Fill(massJPsi);
+   		   
+   	} else if (HK_Charge == -1){
+   		   //B-
+   		   h_muon_m->Fill(massJPsi);
+   		   
+   	}
    }
 	  
-	return;
+   return;
   }
   
 
@@ -351,8 +353,15 @@ void MyAnalysis::Execute() {
   
   massR_Pi = pow((pow( E2+E3 ,2) - (pow(HPi1_PX + HPi2_PX ,2) + pow(HPi1_PY + HPi2_PY,2) + pow(HPi1_PZ + HPi2_PZ,2))),(0.5));
 	
-
-  
+  //if(massR_K > 980- && massR_K < 980+500){
+  //	  return;
+  //}
+  //if(massR_Pi < 770+50 && massR_Pi > 770-50){
+  //	 return;
+  //}
+  //if(massR_K < 892-100 || massR_K > 892+100){
+  //	  return;
+  //}
   //5.6 Dalitz plots
   h_dalitz->Fill(pow(massR_K/1000, 2), pow(massR_Pi/1000, 2));
   
@@ -424,7 +433,7 @@ void MyAnalysis::Execute() {
    
    //pick region from dalitz plot and make three body 
    
-   if((pow(massR_K/1000., 2) >= 1.2 && pow(massR_K/1000., 2) <= 15) && (pow(massR_Pi/1000., 2) >= 0 && pow(massR_Pi/1000., 2) <= 0.6)){
+   if((pow(massR_K/1000., 2) >= 0 && pow(massR_K/1000., 2) <= 15) && (pow(massR_Pi/1000., 2) >= 0 && pow(massR_Pi/1000., 2) <= 0.6)){
 	   h_CP_massB->Fill(massB2);
 	   
 	   if(HK_Charge == 1){

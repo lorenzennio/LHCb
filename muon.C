@@ -65,8 +65,10 @@ void muon() {
   //subtracted->Fit(DrawSignal, "ROME");
   //gStyle->SetOptFit(1111);
   
+  
   hmass_sel2->Draw("E1");
-  hmass_sel2->SetAxisRange(-5., 250., "Y");
+  hmass_sel2->SetAxisRange(-5., 3000., "Y");
+  hmass_sel2->SetAxisRange(3050 ,3150, "X");
   
   total->Draw("same");
   total->SetLineStyle(3);
@@ -101,22 +103,27 @@ void muon() {
   TH1F *hmass_p = (TH1F*)ft->Get("h_muon_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c11f = new TCanvas("c11f","",600,400);
+  TCanvas *c11f = new TCanvas("c11f","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_p->SetLineColor(kBlue);
-  hmass_p->GetXaxis()->SetTitle("Mass [MeV/c^{2}]");
+  hmass_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_p->GetXaxis()->SetTitleSize(.05);
+  hmass_p->GetXaxis()->SetLabelSize(.05);
+  hmass_p->GetYaxis()->SetTitle("Events/Bin");
+  hmass_p->GetYaxis()->SetTitleSize(.05);
+  hmass_p->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
 	 
   TF1 *MSignal = new TF1("MSignal", "gausn", 3050 ,3150);
-  TF1 *MBackground = new TF1("MBackground", "expo", 3150, 3300 );
+  TF1 *MBackground = new TF1("MBackground", "expo", 3050 ,3150);
   //TF1 *MCombBG = new TF1("MCombBG", "gausn", 2900, 3050);
-  TF1 *Mtotal = new TF1("Mtotal","gausn(0) + expo(3)",2900,3300);
+  TF1 *Mtotal = new TF1("Mtotal","gausn(0) + expo(3)",3050 ,3150);
   
 
   hmass_p->Fit(MSignal, "RN");
@@ -150,19 +157,33 @@ void muon() {
   //Msubtracted->Add(MDrawCombBG, -1);
   
   hmass_p->Draw("E1");
-  hmass_p->SetAxisRange(-5., 150., "Y");
+  hmass_p->SetAxisRange(-5., 2000., "Y");
+  hmass_p->SetAxisRange(3050 ,3150, "X");
+  hmass_p->GetXaxis()->SetNdivisions(506);
+  hmass_p->SetLineColor(kBlack);
   
   Mtotal->Draw("same");
-  Mtotal->SetLineColor(2);
+  Mtotal->SetLineColor(kBlue);
   Mtotal->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   MDrawSignal->Draw("same");
-  MDrawSignal->SetLineColor(8);
+  MDrawSignal->SetLineColor(kMagenta+1);
   MDrawSignal->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   MDrawBackground->Draw("same");
-  MDrawBackground->SetLineColor(6);
-  MDrawBackground->SetLineWidth(1);
+  MDrawBackground->SetLineColor(kGreen+3);
+  MDrawBackground->SetLineWidth(2);
+  MDrawBackground->SetLineStyle(9);
+  
+  
+  auto legend6 = new TLegend(0.6,0.75,0.95,0.95);
+  legend6->AddEntry(Mtotal,"Total","l");
+  legend6->AddEntry(MDrawSignal,"Signal","l");
+  legend6->AddEntry(MDrawBackground,"Combinatorial","l");
+  legend6->Draw();
+  
   
   //MDrawCombBG->Draw("same");
   //MDrawCombBG->SetLineColor(38);
@@ -179,22 +200,27 @@ void muon() {
   TH1F *hmass_m = (TH1F*)ft->Get("h_muon_m");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c12f = new TCanvas("c12f","",600,400);
+  TCanvas *c12f = new TCanvas("c12f","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_m->SetLineColor(kBlue);
-  hmass_m->GetXaxis()->SetTitle("Mass [MeV/c^{2}]");
+  hmass_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_m->GetXaxis()->SetTitleSize(.05);
+  hmass_m->GetXaxis()->SetLabelSize(.05);
+  hmass_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_m->GetYaxis()->SetTitleSize(.05);
+  hmass_m->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
 	 
   TF1 *ASignal = new TF1("ASignal", "gausn", 3050 ,3150);
-  TF1 *ABackground = new TF1("ABackground", "expo", 3150, 3300 );
-  TF1 *ACombBG = new TF1("ACombBG", "gausn", 2900, 3050);
-  TF1 *Atotal = new TF1("total","gausn(0) + expo(3)",2900,3300);
+  TF1 *ABackground = new TF1("ABackground", "expo", 3050, 3150 );
+  //TF1 *ACombBG = new TF1("ACombBG", "gausn", 2900, 3050);
+  TF1 *Atotal = new TF1("total","gausn(0) + expo(3)",3050 ,3150);
   
 
   hmass_m->Fit(ASignal, "RN");
@@ -227,19 +253,32 @@ void muon() {
   //Asubtracted->Add(ADrawCombBG, -1);
   
   hmass_m->Draw("E1");
-  hmass_m->SetAxisRange(-5., 150., "Y");
+  hmass_m->SetAxisRange(-5., 2000., "Y");
+  hmass_m->SetAxisRange(3050 ,3150, "X");
+  hmass_m->GetXaxis()->SetNdivisions(506);
+  hmass_m->SetLineColor(kBlack);
   
   Atotal->Draw("same");
-  Atotal->SetLineColor(2);
+  Atotal->SetLineColor(kBlue);
   Atotal->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   ADrawSignal->Draw("same");
-  ADrawSignal->SetLineColor(8);
+  ADrawSignal->SetLineColor(kMagenta+1);
   ADrawSignal->SetLineWidth(2);
-    
+  //MDrawSignal->SetLineStyle(7);
+   
   ADrawBackground->Draw("same");
-  ADrawBackground->SetLineColor(6);
-  ADrawBackground->SetLineWidth(1);
+  ADrawBackground->SetLineColor(kGreen+3);
+  ADrawBackground->SetLineWidth(2);
+  ADrawBackground->SetLineStyle(9);
+  
+  
+  auto legend7 = new TLegend(0.6,0.75,0.95,0.95);
+  legend7->AddEntry(Atotal,"Total","l");
+  legend7->AddEntry(ADrawSignal,"Signal","l");
+  legend7->AddEntry(ADrawBackground,"Combinatorial","l");
+  legend7->Draw();
  
   //ADrawCombBG->Draw("same");
   //ADrawCombBG->SetLineColor(38);

@@ -328,17 +328,23 @@ for(int i = 0; i < 30; i++){
 		}
 	}
 }
-TCanvas *c6 = new TCanvas("c6","",600,400);
+TCanvas *c6 = new TCanvas("c6","",600,500);
 // Draw the first histogram with a blue line, and an x-axis title
 gStyle->SetOptStat("e");
 gStyle->SetOptFit(1111);
 gStyle->SetStatFormat("6.6g");
-sign->SetLineColor(kBlue);
+sign->SetLineColor(kBlack);
 sign->GetXaxis()->SetTitle("Significance");
-sign->GetYaxis()->SetTitle("Bin Number");
+sign->GetXaxis()->SetTitleSize(.05);
+sign->GetXaxis()->SetLabelSize(.05);
+sign->GetYaxis()->SetTitle("Bin Count");
+sign->GetYaxis()->SetTitleSize(.05);
+sign->GetYaxis()->SetLabelSize(.05);
 
 TF1 *bellc = new TF1("bellc", "gausn", -3, 3);
 sign->Fit(bellc, "ROME");
+
+
 
 sign->Draw("E1");
 c6->SaveAs("UpDownsig1D.pdf");

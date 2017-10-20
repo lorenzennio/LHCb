@@ -103,10 +103,15 @@ void drawOutput() {
   TH1F *massR_Pi = (TH1F*)ft->Get("h_massR_Pi");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c6 = new TCanvas("c6","",600,400);
+  TCanvas *c6 = new TCanvas("c6","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   massR_K->SetLineColor(kBlue);
-  massR_K->GetXaxis()->SetTitle("Mass [MeV/c^{2}]");
+  massR_K->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  massR_K->GetXaxis()->SetTitleSize(.05);
+  massR_K->GetXaxis()->SetLabelSize(.05);
+  massR_K->GetYaxis()->SetTitle("Events/Bin");
+  massR_K->GetYaxis()->SetTitleSize(.05);
+  massR_K->GetYaxis()->SetLabelSize(.05);
   massR_K->Draw();
 
   // Draw the second histogram on the same plot with a red line
@@ -114,8 +119,8 @@ void drawOutput() {
   massR_Pi->Draw("same");
 
   auto legend2 = new TLegend(0.55,0.75,0.75,0.85);
-  legend2->AddEntry(massR_K,"Kaon Pion Decay","l");
-  legend2->AddEntry(massR_Pi,"Pion Pion Decay","l");
+  legend2->AddEntry(massR_K,"M_{K#pi}","l");
+  legend2->AddEntry(massR_Pi,"M_{#pi#pi}","l");
   legend2->Draw();
   
   c6->SaveAs("resonance.pdf");

@@ -101,14 +101,19 @@ void drawFitDalitz() {
   TH1F *hmass_p = (TH1F*)ft->Get("h_massB_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c11f = new TCanvas("c11f","",600,400);
+  TCanvas *c11f = new TCanvas("c11f","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_p->SetLineColor(kBlue);
-  hmass_p->GetXaxis()->SetTitle("Mass [MeV/c^{2}]");
+  hmass_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_p->GetXaxis()->SetTitleSize(.05);
+  hmass_p->GetXaxis()->SetLabelSize(.05);
+  hmass_p->GetYaxis()->SetTitle("Events/Bin");
+  hmass_p->GetYaxis()->SetTitleSize(.05);
+  hmass_p->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
@@ -129,7 +134,7 @@ void drawFitDalitz() {
   MCombBG->GetParameters(&Mpar[5]);
 
   Mtotal->SetParameters(Mpar);
-  hmass_p->Fit(Mtotal, "ROME");
+  hmass_p->Fit(Mtotal, "ROMEN");
 	
   
   Double_t Mparfinal[8];
@@ -150,25 +155,39 @@ void drawFitDalitz() {
   Msubtracted->Add(MDrawCombBG, -1);
   
   hmass_p->Draw("E1");
-  hmass_p->SetAxisRange(-50., 800., "Y");
+  hmass_p->SetAxisRange(-5., 620., "Y");
+  hmass_p->SetAxisRange(5050, 5500, "X");
+  hmass_p->GetXaxis()->SetNdivisions(506);
+  hmass_p->SetLineColor(kBlack);
   
   Mtotal->Draw("same");
-  Mtotal->SetLineColor(2);
+  Mtotal->SetLineColor(kBlue);
   Mtotal->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   MDrawSignal->Draw("same");
-  MDrawSignal->SetLineColor(8);
+  MDrawSignal->SetLineColor(kMagenta+1);
   MDrawSignal->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   MDrawBackground->Draw("same");
-  MDrawBackground->SetLineColor(6);
-  MDrawBackground->SetLineWidth(1);
+  MDrawBackground->SetLineColor(kGreen+3);
+  MDrawBackground->SetLineWidth(2);
+  MDrawBackground->SetLineStyle(9);
   
   MDrawCombBG->Draw("same");
   MDrawCombBG->SetLineColor(38);
-  MDrawCombBG->SetLineWidth(1);
+  MDrawCombBG->SetLineWidth(2);
+  MDrawCombBG->SetLineStyle(7);
   
   //Msubtracted->Draw("same");
+  
+  auto legend1 = new TLegend(0.6,0.7,0.95,0.95);
+  legend1->AddEntry(Mtotal,"Total","l");
+  legend1->AddEntry(MDrawSignal,"Signal","l");
+  legend1->AddEntry(MDrawBackground,"Combinatorial","l");
+  legend1->AddEntry(MDrawCombBG,"4-body","l");
+  legend1->Draw();
   
  
   c11f->SaveAs("massB_matter.pdf");
@@ -179,14 +198,19 @@ void drawFitDalitz() {
   TH1F *hmass_m = (TH1F*)ft->Get("h_massB_m");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c12f = new TCanvas("c12f","",600,400);
+  TCanvas *c12f = new TCanvas("c12f","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_m->SetLineColor(kBlue);
-  hmass_m->GetXaxis()->SetTitle("Mass [MeV/c^{2}]");
+  hmass_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_m->GetXaxis()->SetTitleSize(.05);
+  hmass_m->GetXaxis()->SetLabelSize(.05);
+  hmass_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_m->GetYaxis()->SetTitleSize(.05);
+  hmass_m->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
@@ -227,26 +251,39 @@ void drawFitDalitz() {
   Asubtracted->Add(ADrawCombBG, -1);
   
   hmass_m->Draw("E1");
-  hmass_m->SetAxisRange(-50., 800., "Y");
+  hmass_m->SetAxisRange(-5., 620., "Y");
+  hmass_m->SetAxisRange(5050, 5500, "X");
+  hmass_m->GetXaxis()->SetNdivisions(506);
+  hmass_m->SetLineColor(kBlack);
   
   Atotal->Draw("same");
-  Atotal->SetLineColor(2);
+  Atotal->SetLineColor(kBlue);
   Atotal->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   ADrawSignal->Draw("same");
-  ADrawSignal->SetLineColor(8);
+  ADrawSignal->SetLineColor(kMagenta+1);
   ADrawSignal->SetLineWidth(2);
-    
+  //MDrawSignal->SetLineStyle(7);
+   
   ADrawBackground->Draw("same");
-  ADrawBackground->SetLineColor(6);
-  ADrawBackground->SetLineWidth(1);
- 
+  ADrawBackground->SetLineColor(kGreen+3);
+  ADrawBackground->SetLineWidth(2);
+  ADrawBackground->SetLineStyle(9);
+  
   ADrawCombBG->Draw("same");
   ADrawCombBG->SetLineColor(38);
-  ADrawCombBG->SetLineWidth(1);
- 
-  //Asubtracted->Draw("same E1");
+  ADrawCombBG->SetLineWidth(2);
+  ADrawCombBG->SetLineStyle(7);
   
+  //Msubtracted->Draw("same");
+  
+  auto legend2 = new TLegend(0.6,0.7,0.95,0.95);
+  legend2->AddEntry(Mtotal,"Total","l");
+  legend2->AddEntry(MDrawSignal,"Signal","l");
+  legend2->AddEntry(ADrawBackground,"Combinatorial","l");
+  legend2->AddEntry(MDrawCombBG,"4-body","l");
+  legend2->Draw();
  
   c12f->SaveAs("massB_antimatter.pdf");
   
@@ -294,12 +331,17 @@ void drawFitDalitz() {
   //Dalitz plot for complete data
   
   TH2F *hdalitz = (TH2F*)ft->Get("h_dalitz");
-  TCanvas *c2 = new TCanvas("c2","",600,400);
+  TCanvas *c2 = new TCanvas("c2","",600,500);
   hdalitz->SetStats(0);
-  hdalitz->GetXaxis()->SetTitle("Mass_{K#pi}^{2} [GeV^{2}/c^{4}]");
-  hdalitz->GetYaxis()->SetTitle("Mass_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
-  hdalitz->GetXaxis()->SetRange(-3, 40);
-  hdalitz->GetYaxis()->SetRange(-3, 40);
+  hdalitz->GetXaxis()->SetTitle("M_{K#pi}^{2} [GeV^{2}/c^{4}]");
+  hdalitz->GetXaxis()->SetTitleSize(.05);
+  hdalitz->GetXaxis()->SetLabelSize(.05);
+  hdalitz->GetYaxis()->SetTitle("M_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+  hdalitz->GetYaxis()->SetTitleSize(.05);
+  hdalitz->GetYaxis()->SetLabelSize(.05);
+  hdalitz->GetZaxis()->SetLabelSize(.05);
+  hdalitz->GetXaxis()->SetRange(-3, 35);
+  hdalitz->GetYaxis()->SetRange(-3, 35);
   hdalitz->Draw("colz");                          // draw with a colour scale
   c2->SaveAs("dalitz.pdf");
   
@@ -452,7 +494,7 @@ void drawFitDalitz() {
   c11->SaveAs("dalitz_ass.pdf");
   
   TH2F *hdalitzass_err = (TH2F*) hdalitzass->Clone();
-
+  hdalitzass_err->Sumw2();
   
   //double err;
   for(int a = 0; a < xbin; a++){
@@ -508,15 +550,24 @@ void drawFitDalitz() {
   }
   
   
-  TCanvas *c14 = new TCanvas("c14","",600,400);
+  TCanvas *c14 = new TCanvas("c14","",600,500);
   hdalitzass_corr->SetStats(0);
-  hdalitzass_corr->GetXaxis()->SetTitle("Mass_{K#pi}^{2} [GeV^{2}/c^{4}]");
-  hdalitzass_corr->GetYaxis()->SetTitle("Mass_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+  hdalitzass_corr->GetXaxis()->SetTitle("M_{K#pi}^{2} [GeV^{2}/c^{4}]");
+  hdalitzass_corr->GetXaxis()->SetTitleSize(.05);
+  hdalitzass_corr->GetXaxis()->SetLabelSize(.05);
+  hdalitzass_corr->GetYaxis()->SetTitle("M_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+  hdalitzass_corr->GetYaxis()->SetTitleSize(.05);
+  hdalitzass_corr->GetYaxis()->SetLabelSize(.05);
+  hdalitzass_corr->GetZaxis()->SetLabelSize(.05);
   hdalitzass_corr->GetXaxis()->SetRange(-1, 32);
-  hdalitzass_corr->GetYaxis()->SetRange(-1, 27);
+  hdalitzass_corr->GetYaxis()->SetRange(-1, 30);
   hdalitzass_corr->SetMaximum(1);
   hdalitzass_corr->SetMinimum(-1);
+  c14->SetBottomMargin(0.11);
+  c14->SetLeftMargin(0.11);
+  c14->SetRightMargin(0.13);
   hdalitzass_corr->Draw("colz");                          // draw with a colour scale
+  
   //hdalitzass_corr->SetFrameFillColor(1);
   c14->SaveAs("dalitz_ass_corr.pdf");
 
@@ -606,14 +657,19 @@ void drawFitDalitz() {
   TH1F *hmass_CP_p = (TH1F*)ft->Get("h_CP_massB_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c15 = new TCanvas("c15","",600,400);
+  TCanvas *c15 = new TCanvas("c15","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_CP_p->SetLineColor(kBlue);
-  hmass_CP_p->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  hmass_CP_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_CP_p->GetXaxis()->SetTitleSize(.05);
+  hmass_CP_p->GetXaxis()->SetLabelSize(.05);
+  hmass_CP_p->GetYaxis()->SetTitle("Events/Bin");
+  hmass_CP_p->GetYaxis()->SetTitleSize(.05);
+  hmass_CP_p->GetYaxis()->SetLabelSize(.05);
   
   
 
@@ -664,27 +720,37 @@ void drawFitDalitz() {
   Msubtracted_CP->Add(MDrawCombBG_CP, -1);
   
   hmass_CP_p->Draw("E1");
-  
-  hmass_CP_p->SetAxisRange(5090, 5500., "X");
-  hmass_CP_p->SetAxisRange(-2., 90., "Y");
+  hmass_CP_p->SetAxisRange(-1., 90., "Y");
+  hmass_CP_p->SetAxisRange(5090, 5500, "X");
+  hmass_CP_p->GetXaxis()->SetNdivisions(506);
+  hmass_CP_p->SetLineColor(kBlack);
   
   Mtotal_CP->Draw("same");
-  Mtotal_CP->SetLineColor(2);
+  Mtotal_CP->SetLineColor(kBlue);
   Mtotal_CP->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   MDrawSignal_CP->Draw("same");
-  MDrawSignal_CP->SetLineColor(8);
+  MDrawSignal_CP->SetLineColor(kMagenta+1);
   MDrawSignal_CP->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   MDrawBackground_CP->Draw("same");
-  MDrawBackground_CP->SetLineColor(6);
-  MDrawBackground_CP->SetLineWidth(1);
+  MDrawBackground_CP->SetLineColor(kGreen+3);
+  MDrawBackground_CP->SetLineWidth(2);
+  MDrawBackground_CP->SetLineStyle(9);
   
   MDrawCombBG_CP->Draw("same");
   MDrawCombBG_CP->SetLineColor(38);
-  MDrawCombBG_CP->SetLineWidth(1);
+  MDrawCombBG_CP->SetLineWidth(2);
+  MDrawCombBG_CP->SetLineStyle(7);
   
-  //Msubtracted_CP->Draw("same");
+  auto legend4 = new TLegend(0.6,0.7,0.95,0.95);
+  legend4->AddEntry(Mtotal_CP,"Total","l");
+  legend4->AddEntry(MDrawSignal_CP,"Signal","l");
+  legend4->AddEntry(MDrawBackground_CP,"Combinatorial","l");
+  legend4->AddEntry(MDrawCombBG_CP,"4-body","l");
+  legend4->Draw();
   
   
   c15->SaveAs("CP_massB_p.pdf");
@@ -694,21 +760,26 @@ void drawFitDalitz() {
   TH1F *hmass_CP_m = (TH1F*)ft->Get("h_CP_massB_m");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c16 = new TCanvas("c16","",600,400);
+  TCanvas *c16 = new TCanvas("c16","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_CP_m->SetLineColor(kBlue);
-  hmass_CP_m->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  hmass_CP_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_CP_m->GetXaxis()->SetTitleSize(.05);
+  hmass_CP_m->GetXaxis()->SetLabelSize(.05);
+  hmass_CP_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_CP_m->GetYaxis()->SetTitleSize(.05);
+  hmass_CP_m->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
  
   TF1 *ASignal_CP = new TF1("ASignal_CP", "gausn", 5279.29-40 ,5279.29+50);
   TF1 *ABackground_CP = new TF1("ABackground_CP", "expo", 5279.29+80, 5700 );
-  TF1 *ACombBG_CP = new TF1("ACombBG_CP", "gaus", 5035, 5279.29-80);
+  TF1 *ACombBG_CP = new TF1("ACombBG_CP", "gausn", 5035, 5279.29-80);
   TF1 *Atotal_CP = new TF1("Atotal_CP","gausn(0) + expo(3) + gausn(5)",5035,5700);
   
   ASignal_CP->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
@@ -748,25 +819,38 @@ void drawFitDalitz() {
   Asubtracted_CP->Add(ADrawCombBG_CP, -1);
   
   hmass_CP_m->Draw("E1");
-  
-  hmass_CP_m->SetAxisRange(5090, 5500., "X");
-  hmass_CP_m->SetAxisRange(-2., 90., "Y");
+  hmass_CP_m->SetAxisRange(-1., 90., "Y");
+  hmass_CP_m->SetAxisRange(5090, 5500, "X");
+  hmass_CP_m->GetXaxis()->SetNdivisions(506);
+  hmass_CP_m->SetLineColor(kBlack);
   
   Atotal_CP->Draw("same");
-  Atotal_CP->SetLineColor(2);
+  Atotal_CP->SetLineColor(kBlue);
   Atotal_CP->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   ADrawSignal_CP->Draw("same");
-  ADrawSignal_CP->SetLineColor(8);
+  ADrawSignal_CP->SetLineColor(kMagenta+1);
   ADrawSignal_CP->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   ADrawBackground_CP->Draw("same");
-  ADrawBackground_CP->SetLineColor(6);
-  ADrawBackground_CP->SetLineWidth(1);
+  ADrawBackground_CP->SetLineColor(kGreen+3);
+  ADrawBackground_CP->SetLineWidth(2);
+  ADrawBackground_CP->SetLineStyle(9);
   
   ADrawCombBG_CP->Draw("same");
   ADrawCombBG_CP->SetLineColor(38);
-  ADrawCombBG_CP->SetLineWidth(1);
+  ADrawCombBG_CP->SetLineWidth(2);
+  ADrawCombBG_CP->SetLineStyle(7);
+  
+  auto legend3 = new TLegend(0.6,0.7,0.95,0.95);
+  legend3->AddEntry(Atotal_CP,"Total","l");
+  legend3->AddEntry(ADrawSignal_CP,"Signal","l");
+  legend3->AddEntry(ADrawBackground_CP,"Combinatorial","l");
+  legend3->AddEntry(ADrawCombBG_CP,"4-body","l");
+  legend3->Draw();
+ 
   
   //Asubtracted_CP->Draw("same");
   
@@ -787,7 +871,7 @@ void drawFitDalitz() {
   cout << "Aparfinal_CP[0]: " << Aparfinal_CP[0] << "\n";
   cout << "Np: " << Np_CP << "\n";
   cout << "Nm: " << Nm_CP << "\n";
-  cout << "\nCP Asymmetry: " << A_CP<< "+/-"<< Aerr_CP << "+/-"<< Aerr2_CP << "\n\n\n";
+  cout << "\nCP Asymmetry 1: " << A_CP<< "+/-"<< Aerr_CP << "+/-"<< Aerr2_CP << "\n\n\n";
   
   
   //specified region TWO 3 body ----------------------------------
@@ -816,8 +900,8 @@ void drawFitDalitz() {
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
   TF1 *Signal_CP2 = new TF1("Signal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
   TF1 *Background_CP2 = new TF1("Background_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *CombBG_CP2 = new TF1("CombBG_CP2", "gausn", 5035, 5279.29-80);
-  TF1 *total_CP2 = new TF1("total_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *CombBG_CP2 = new TF1("CombBG_CP2", "landau", 5035, 5279.29-80);
+  TF1 *total_CP2 = new TF1("total_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
   
   hmass_CP2->Fit(Signal_CP2, "R");
   hmass_CP2->Fit(Background_CP2, "RN+");
@@ -841,7 +925,7 @@ void drawFitDalitz() {
   
   TF1 *DrawSignal_CP2 = new TF1("DrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *DrawBackground_CP2 = new TF1("DrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *DrawCombBG_CP2 = new TF1("DrawCombBG_CP2", "gausn", 5035 ,5700);
+  TF1 *DrawCombBG_CP2 = new TF1("DrawCombBG_CP2", "landau", 5035 ,5700);
   DrawSignal_CP2->SetParameters(&parfinal_CP2[0]);
   DrawBackground_CP2->SetParameters(&parfinal_CP2[3]);
   DrawCombBG_CP2->SetParameters(&parfinal_CP2[5]);
@@ -881,22 +965,27 @@ void drawFitDalitz() {
   TH1F *hmass_CP2_p = (TH1F*)ft->Get("h_CP_massB2_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c18 = new TCanvas("c18","",600,400);
+  TCanvas *c18 = new TCanvas("c18","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_CP2_p->SetLineColor(kBlue);
-  hmass_CP2_p->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  hmass_CP2_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_CP2_p->GetXaxis()->SetTitleSize(.05);
+  hmass_CP2_p->GetXaxis()->SetLabelSize(.05);
+  hmass_CP2_p->GetYaxis()->SetTitle("Events/Bin");
+  hmass_CP2_p->GetYaxis()->SetTitleSize(.05);
+  hmass_CP2_p->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
   TF1 *MSignal_CP2 = new TF1("MSignal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
   TF1 *MBackground_CP2 = new TF1("MBackground_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *MCombBG_CP2 = new TF1("MCombBG_CP2", "gausn", 5035, 5279.29-80);
-  TF1 *Mtotal_CP2 = new TF1("Mtotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *MCombBG_CP2 = new TF1("MCombBG_CP2", "landau", 5035, 5279.29-80);
+  TF1 *Mtotal_CP2 = new TF1("Mtotal_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
   
   MSignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
   MSignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
@@ -929,7 +1018,7 @@ void drawFitDalitz() {
   
   TF1 *MDrawSignal_CP2 = new TF1("MDrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *MDrawBackground_CP2 = new TF1("MDrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *MDrawCombBG_CP2 = new TF1("MDrawCombBG_CP2", "gausn", 5035 ,5700);
+  TF1 *MDrawCombBG_CP2 = new TF1("MDrawCombBG_CP2", "landau", 5035 ,5700);
   MDrawSignal_CP2->SetParameters(&Mparfinal_CP2[0]);
   MDrawBackground_CP2->SetParameters(&Mparfinal_CP2[3]);
   MDrawCombBG_CP2->SetParameters(&Mparfinal_CP2[5]);
@@ -939,25 +1028,38 @@ void drawFitDalitz() {
   Msubtracted_CP2->Add(MDrawCombBG_CP2, -1);
   
   hmass_CP2_p->Draw("E1");
-  
-  hmass_CP2_p->SetAxisRange(5090, 5500., "X");
-  hmass_CP2_p->SetAxisRange(-2., 90., "Y");
+  hmass_CP2_p->SetAxisRange(-1., 90., "Y");
+  hmass_CP2_p->SetAxisRange(5090, 5500, "X");
+  hmass_CP2_p->GetXaxis()->SetNdivisions(506);
+  hmass_CP2_p->SetLineColor(kBlack);
   
   Mtotal_CP2->Draw("same");
-  Mtotal_CP2->SetLineColor(2);
+  Mtotal_CP2->SetLineColor(kBlue);
   Mtotal_CP2->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   MDrawSignal_CP2->Draw("same");
-  MDrawSignal_CP2->SetLineColor(8);
+  MDrawSignal_CP2->SetLineColor(kMagenta+1);
   MDrawSignal_CP2->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   MDrawBackground_CP2->Draw("same");
-  MDrawBackground_CP2->SetLineColor(6);
-  MDrawBackground_CP2->SetLineWidth(1);
+  MDrawBackground_CP2->SetLineColor(kGreen+3);
+  MDrawBackground_CP2->SetLineWidth(2);
+  MDrawBackground_CP2->SetLineStyle(9);
   
   MDrawCombBG_CP2->Draw("same");
   MDrawCombBG_CP2->SetLineColor(38);
-  MDrawCombBG_CP2->SetLineWidth(1);
+  MDrawCombBG_CP2->SetLineWidth(2);
+  MDrawCombBG_CP2->SetLineStyle(7);
+  
+  auto legend5 = new TLegend(0.6,0.7,0.95,0.95);
+  legend5->AddEntry(Mtotal_CP2,"Total","l");
+  legend5->AddEntry(MDrawSignal_CP2,"Signal","l");
+  legend5->AddEntry(MDrawBackground_CP2,"Combinatorial","l");
+  legend5->AddEntry(MDrawCombBG_CP2,"4-body","l");
+  legend5->Draw();
+  
   
   //Msubtracted_CP2->Draw("same");
   
@@ -969,22 +1071,27 @@ void drawFitDalitz() {
   TH1F *hmass_CP2_m = (TH1F*)ft->Get("h_CP_massB2_m");
   
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c19 = new TCanvas("c19","",600,400);
+  TCanvas *c19 = new TCanvas("c19","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
   gStyle->SetOptStat("e");
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
   hmass_CP2_m->SetLineColor(kBlue);
-  hmass_CP2_m->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
+  hmass_CP2_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_CP2_m->GetXaxis()->SetTitleSize(.05);
+  hmass_CP2_m->GetXaxis()->SetLabelSize(.05);
+  hmass_CP2_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_CP2_m->GetYaxis()->SetTitleSize(.05);
+  hmass_CP2_m->GetYaxis()->SetLabelSize(.05);
   
 
   //fit
  
   TF1 *ASignal_CP2 = new TF1("ASignal_CP2", "gausn", 5279.29-40 ,5279.29+50);
   TF1 *ABackground_CP2 = new TF1("ABackground_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *ACombBG_CP2 = new TF1("ACombBG_CP2", "gaus", 5035, 5279.29-80);
-  TF1 *Atotal_CP2 = new TF1("Atotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *ACombBG_CP2 = new TF1("ACombBG_CP2", "landau", 5035, 5279.29-80);
+  TF1 *Atotal_CP2 = new TF1("Atotal_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
   
   ASignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
   ASignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
@@ -1013,7 +1120,7 @@ void drawFitDalitz() {
   
   TF1 *ADrawSignal_CP2 = new TF1("ADrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *ADrawBackground_CP2 = new TF1("ADrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *ADrawCombBG_CP2 = new TF1("ADrawCombBG_CP2", "gausn", 5035 ,5700);
+  TF1 *ADrawCombBG_CP2 = new TF1("ADrawCombBG_CP2", "landau", 5035 ,5700);
   ADrawSignal_CP2->SetParameters(&Aparfinal_CP2[0]);
   ADrawBackground_CP2->SetParameters(&Aparfinal_CP2[3]);
   ADrawCombBG_CP2->SetParameters(&Aparfinal_CP2[5]);
@@ -1023,25 +1130,39 @@ void drawFitDalitz() {
   Asubtracted_CP2->Add(ADrawCombBG_CP2, -1);
   
   hmass_CP2_m->Draw("E1");
-  
-  hmass_CP2_m->SetAxisRange(5090, 5500., "X");
-  hmass_CP2_m->SetAxisRange(-2., 90., "Y");
+  hmass_CP2_m->SetAxisRange(-1., 90., "Y");
+  hmass_CP2_m->SetAxisRange(5090, 5500, "X");
+  hmass_CP2_m->GetXaxis()->SetNdivisions(506);
+  hmass_CP2_m->SetLineColor(kBlack);
   
   Atotal_CP2->Draw("same");
-  Atotal_CP2->SetLineColor(2);
+  Atotal_CP2->SetLineColor(kBlue);
   Atotal_CP2->SetLineWidth(2);
+  //Mtotal->SetLineStyle(9);
   
   ADrawSignal_CP2->Draw("same");
-  ADrawSignal_CP2->SetLineColor(8);
+  ADrawSignal_CP2->SetLineColor(kMagenta+1);
   ADrawSignal_CP2->SetLineWidth(2);
+  //MDrawSignal->SetLineStyle(7);
    
   ADrawBackground_CP2->Draw("same");
-  ADrawBackground_CP2->SetLineColor(6);
-  ADrawBackground_CP2->SetLineWidth(1);
+  ADrawBackground_CP2->SetLineColor(kGreen+3);
+  ADrawBackground_CP2->SetLineWidth(2);
+  ADrawBackground_CP2->SetLineStyle(9);
   
   ADrawCombBG_CP2->Draw("same");
   ADrawCombBG_CP2->SetLineColor(38);
-  ADrawCombBG_CP2->SetLineWidth(1);
+  ADrawCombBG_CP2->SetLineWidth(2);
+  ADrawCombBG_CP2->SetLineStyle(7);
+  
+  auto legend6 = new TLegend(0.6,0.7,0.95,0.95);
+  legend6->AddEntry(Atotal_CP2,"Total","l");
+  legend6->AddEntry(ADrawSignal_CP2,"Signal","l");
+  legend6->AddEntry(ADrawBackground_CP2,"Combinatorial","l");
+  legend6->AddEntry(ADrawCombBG_CP2,"4-body","l");
+  legend6->Draw();
+  
+  
   
   //Asubtracted_CP->Draw("same");
   
@@ -1062,6 +1183,6 @@ void drawFitDalitz() {
   cout << "Aparfinal_CP[0]: " << Aparfinal_CP2[0] << "\n";
   cout << "Np: " << Np_CP2 << "\n";
   cout << "Nm: " << Nm_CP2 << "\n";
-  cout << "\nCP Asymmetry: " << A_CP2<< "+/-"<< Aerr_CP2 <<"+/-"<< Aerr2_CP2 <<"\n\n\n";
+  cout << "\nCP Asymmetry 2: " << A_CP2<< "+/-"<< Aerr_CP2 <<"+/-"<< Aerr2_CP2 <<"\n\n\n";
 }
 

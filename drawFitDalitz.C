@@ -8,7 +8,8 @@ using namespace std;
 void drawFitDalitz() {
   TFile *f = new TFile("outputPhaseSpace.root");
   TFile *ft = new TFile("outputDataAll.root");
-  
+  gStyle->SetTextFont(12);
+  gStyle->SetLabelFont(12, "XYZ");
   //5.5 Fitting
   // Get pointers to the example histograms that were made 
   //TOTAL
@@ -101,27 +102,53 @@ void drawFitDalitz() {
   TH1F *hmass_p = (TH1F*)ft->Get("h_massB_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c11f = new TCanvas("c11f","",600,500);
+  TCanvas *c11f = new TCanvas("c11f", "",1000,500);
+  //c11f->SetCanvasSize(900, 400);
+  //c11f->Divide(2,1,0);
+  //c11f->GetDoubleBuffer();
+  ////c11f->SetWindowSize(1500, 700);
+  //c11f->SetDoubleBuffer(1);
+  ////c11f->TGframe();
+  //c11f->cd(1);
+
+  
+  TPad* p1=new TPad("p1","",0.0,0,0.5,1.0,0);
+    p1->SetBottomMargin(0.15);
+    p1->SetLeftMargin(0.2);
+    p1->SetRightMargin(0.0);
+    p1->SetTopMargin(0.01);
+    p1->Draw();
+    TPad* p2=new TPad("p1","",0.5,0,1.0,1.0,0);
+    p2->SetBottomMargin(0.15);
+    p2->SetLeftMargin(0.0);
+    p2->SetRightMargin(0.2);
+    p2->SetTopMargin(0.01);
+    p2->Draw();
+	p1->cd();
   // Draw the first histogram with a blue line, and an x-axis title
-  gStyle->SetOptStat("e");
-  gStyle->SetOptFit(1111);
-  gStyle->SetStatFormat("6.6g");
-  
+  gStyle->SetOptStat(0);
+  //gStyle->SetOptFit(1111);
+  //gStyle->SetStatFormat("6.6g");
+  gStyle->SetLineWidth(2);
   hmass_p->SetLineColor(kBlue);
-  hmass_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
-  hmass_p->GetXaxis()->SetTitleSize(.05);
-  hmass_p->GetXaxis()->SetLabelSize(.05);
-  hmass_p->GetYaxis()->SetTitle("Events/Bin");
-  hmass_p->GetYaxis()->SetTitleSize(.05);
-  hmass_p->GetYaxis()->SetLabelSize(.05);
-  
+  hmass_p->GetXaxis()->SetTitle("M_{K^{+} #pi^{+} #pi^{-}} [GeV/c^{2}]");
+  //hmass_p->GetXaxis()->SetTitleSize(.08);
+  //hmass_p->GetXaxis()->SetLabelSize(.08);
+  hmass_p->GetYaxis()->SetTitle("Events/(0.003 GeV/c^{2})");
+  //hmass_p->GetYaxis()->SetTitleSize(.05);
+  //hmass_p->GetYaxis()->SetLabelSize(.05);
+  hmass_p->SetTitleSize(0.065,"XYZ");
+  hmass_p->SetLabelSize(0.065,"XYZ");
+  hmass_p->SetLabelOffset(0.01,"XYZ");
+  hmass_p->SetLabelFont(132, "XYZ");
+  hmass_p->SetTitleFont(132, "XYZ");
 
   //fit
 	 
-  TF1 *MSignal = new TF1("MSignal", "gausn", 5279.29-40 ,5279.29+50);
-  TF1 *MBackground = new TF1("MBackground", "expo", 5279.29+80, 5700 );
-  TF1 *MCombBG = new TF1("MCombBG", "gausn", 5050, 5279.29-80);
-  TF1 *Mtotal = new TF1("Mtotal","gausn(0) + expo(3) + gausn(5)",5050,5700);
+  TF1 *MSignal = new TF1("MSignal", "gausn", 5.27929-0.040 ,5.27929+0.050);
+  TF1 *MBackground = new TF1("MBackground", "expo", 5.27929+0.080, 5.700 );
+  TF1 *MCombBG = new TF1("MCombBG", "gausn", 5.050, 5.27929-0.080);
+  TF1 *Mtotal = new TF1("Mtotal","gausn(0) + expo(3) + gausn(5)",5.050,5.700);
   
 
   hmass_p->Fit(MSignal, "RN");
@@ -143,9 +170,9 @@ void drawFitDalitz() {
   Mtotal->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
 	  
   
-  TF1 *MDrawSignal = new TF1("MDrawSignal", "gausn", 5050 ,5700);
-  TF1 *MDrawBackground = new TF1("MDrawBackground", "expo", 5050 ,5700);
-  TF1 *MDrawCombBG = new TF1("MDrawCombBG", "gausn", 5050 ,5700);
+  TF1 *MDrawSignal = new TF1("MDrawSignal", "gausn", 5.050 ,5.700);
+  TF1 *MDrawBackground = new TF1("MDrawBackground", "expo", 5.050 ,5.700);
+  TF1 *MDrawCombBG = new TF1("MDrawCombBG", "gausn", 5.050 ,5.700);
   MDrawSignal->SetParameters(&Mparfinal[0]);
   MDrawBackground->SetParameters(&Mparfinal[3]);
   MDrawCombBG->SetParameters(&Mparfinal[5]);
@@ -156,9 +183,10 @@ void drawFitDalitz() {
   
   hmass_p->Draw("E1");
   hmass_p->SetAxisRange(-5., 620., "Y");
-  hmass_p->SetAxisRange(5050, 5500, "X");
+  hmass_p->SetAxisRange(5.050, 5.450, "X");
   hmass_p->GetXaxis()->SetNdivisions(506);
   hmass_p->SetLineColor(kBlack);
+  hmass_p->SetLineWidth(1);
   
   Mtotal->Draw("same");
   Mtotal->SetLineColor(kBlue);
@@ -182,15 +210,16 @@ void drawFitDalitz() {
   
   //Msubtracted->Draw("same");
   
-  auto legend1 = new TLegend(0.6,0.7,0.95,0.95);
-  legend1->AddEntry(Mtotal,"Total","l");
-  legend1->AddEntry(MDrawSignal,"Signal","l");
-  legend1->AddEntry(MDrawBackground,"Combinatorial","l");
-  legend1->AddEntry(MDrawCombBG,"4-body","l");
-  legend1->Draw();
+  //auto legend1 = new TLegend(0.6,0.7,0.95,0.95);
+  //legend1->AddEntry(Mtotal,"Total","l");
+  //legend1->AddEntry(MDrawSignal,"Signal","l");
+  //legend1->AddEntry(MDrawBackground,"Combinatorial","l");
+  //legend1->AddEntry(MDrawCombBG,"4-body","l");
+  //legend1->Draw();
   
- 
-  c11f->SaveAs("massB_matter.pdf");
+
+  p2->cd();
+  //c11f->SaveAs("massB_matter.pdf");
   
   
   //ANTIMATTER
@@ -198,27 +227,32 @@ void drawFitDalitz() {
   TH1F *hmass_m = (TH1F*)ft->Get("h_massB_m");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c12f = new TCanvas("c12f","",600,500);
+  //TCanvas *c12f = new TCanvas("c12f","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
-  gStyle->SetOptStat("e");
-  gStyle->SetOptFit(1111);
-  gStyle->SetStatFormat("6.6g");
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(0000);
+  //gStyle->SetStatFormat("6.6g");
   
   hmass_m->SetLineColor(kBlue);
-  hmass_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_m->GetXaxis()->SetTitle("M_{K^{-} #pi^{+} #pi^{-}} [GeV/c^{2}]");
   hmass_m->GetXaxis()->SetTitleSize(.05);
   hmass_m->GetXaxis()->SetLabelSize(.05);
-  hmass_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_m->GetYaxis()->SetTitle("Events/0.003");
   hmass_m->GetYaxis()->SetTitleSize(.05);
   hmass_m->GetYaxis()->SetLabelSize(.05);
+  hmass_m->SetTitleSize(0.065,"XYZ");
+  hmass_m->SetLabelSize(0.065,"XYZ");
+  hmass_m->SetLabelOffset(0.01,"XYZ");
+  hmass_m->SetLabelFont(132, "XYZ");
+  hmass_m->SetTitleFont(132, "XYZ");
   
 
   //fit
 	 
-  TF1 *ASignal = new TF1("ASignal", "gausn", 5279.29-40 ,5279.29+50);
-  TF1 *ABackground = new TF1("ABackground", "expo", 5279.29+80, 5700 );
-  TF1 *ACombBG = new TF1("ACombBG", "gausn", 5050, 5279.29-80);
-  TF1 *Atotal = new TF1("total","gausn(0) + expo(3) + gausn(5)",5050,5700);
+  TF1 *ASignal = new TF1("ASignal", "gausn", 5.27929-0.040 ,5.27929+0.050);
+  TF1 *ABackground = new TF1("ABackground", "expo", 5.27929+0.080, 5.700 );
+  TF1 *ACombBG = new TF1("ACombBG", "gausn", 5.050, 5.27929-0.080);
+  TF1 *Atotal = new TF1("total","gausn(0) + expo(3) + gausn(5)",5.050,5.700);
   
 
   hmass_m->Fit(ASignal, "RN");
@@ -239,9 +273,9 @@ void drawFitDalitz() {
   Atotal->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
 	  
   
-  TF1 *ADrawSignal = new TF1("ADrawSignal", "gausn", 5050 ,5700);
-  TF1 *ADrawBackground = new TF1("ADrawBackground", "expo", 5050 ,5700);
-  TF1 *ADrawCombBG = new TF1("ADrawCombBG", "gausn", 5050 ,5700);
+  TF1 *ADrawSignal = new TF1("ADrawSignal", "gausn", 5.050 ,5.700);
+  TF1 *ADrawBackground = new TF1("ADrawBackground", "expo", 5.050 ,5.700);
+  TF1 *ADrawCombBG = new TF1("ADrawCombBG", "gausn", 5.050 ,5.700);
   ADrawSignal->SetParameters(&Aparfinal[0]);
   ADrawBackground->SetParameters(&Aparfinal[3]);
   ADrawCombBG->SetParameters(&Aparfinal[5]);
@@ -250,9 +284,11 @@ void drawFitDalitz() {
   Asubtracted->Add(ADrawBackground, -1);
   Asubtracted->Add(ADrawCombBG, -1);
   
+
   hmass_m->Draw("E1");
+  hmass_m->SetLineWidth(1);
   hmass_m->SetAxisRange(-5., 620., "Y");
-  hmass_m->SetAxisRange(5050, 5500, "X");
+  hmass_m->SetAxisRange(5.050, 5.450, "X");
   hmass_m->GetXaxis()->SetNdivisions(506);
   hmass_m->SetLineColor(kBlack);
   
@@ -278,14 +314,19 @@ void drawFitDalitz() {
   
   //Msubtracted->Draw("same");
   
-  auto legend2 = new TLegend(0.6,0.7,0.95,0.95);
+  auto legend2 = new TLegend(0.52,0.67,0.9,0.98);
   legend2->AddEntry(Mtotal,"Total","l");
   legend2->AddEntry(MDrawSignal,"Signal","l");
-  legend2->AddEntry(ADrawBackground,"Combinatorial","l");
-  legend2->AddEntry(MDrawCombBG,"4-body","l");
+  legend2->AddEntry(ADrawBackground,"Comb.","l");
+  legend2->AddEntry(MDrawCombBG,"4-Body","l");
+  legend2->SetBorderSize(0);
+  legend2->SetFillStyle(0);
+  legend2->SetTextFont(132);
+  //legend2->SetLegendTextSize(102);
   legend2->Draw();
- 
-  c12f->SaveAs("massB_antimatter.pdf");
+  
+  c11f->Size(20, 10);
+  c11f->SaveAs("massB_antimatter.pdf");
   
   //CP ASSYMETRY
   double scale = hmass_sel2->GetXaxis()->GetBinWidth(1);
@@ -368,11 +409,11 @@ void drawFitDalitz() {
   
   //B+ background
   //scaling
-  double Ip_p = ((1./Mparfinal[4]) * exp(Mparfinal[3]) * (exp(Mparfinal[4]*(5.28437e+03 + 40)) - exp(Mparfinal[4]*(5.28437e+03 - 40))))/scale;
-  double Im_p = ((1./Aparfinal[4]) * exp(Aparfinal[3]) * (exp(Aparfinal[4]*(5.28437e+03 + 40)) - exp(Aparfinal[4]*(5.28437e+03 - 40))))/scale;
+  double Ip_p = ((1./Mparfinal[4]) * exp(Mparfinal[3]) * (exp(Mparfinal[4]*(5.28437 + 0.040)) - exp(Mparfinal[4]*(5.28437 - 0.040))))/scale;
+  double Im_p = ((1./Aparfinal[4]) * exp(Aparfinal[3]) * (exp(Aparfinal[4]*(5.28437 + 0.040)) - exp(Aparfinal[4]*(5.28437 - 0.040))))/scale;
   
-  double Ip_b = ((1./Mparfinal[4]) * exp(Mparfinal[3]) * (exp(Mparfinal[4]*5430) - exp(Mparfinal[4]*5350)))/scale;
-  double Im_b = ((1./Aparfinal[4]) * exp(Aparfinal[3]) * (exp(Aparfinal[4]*5430) - exp(Aparfinal[4]*5350)))/scale;
+  double Ip_b = ((1./Mparfinal[4]) * exp(Mparfinal[3]) * (exp(Mparfinal[4]*5.430) - exp(Mparfinal[4]*5.350)))/scale;
+  double Im_b = ((1./Aparfinal[4]) * exp(Aparfinal[3]) * (exp(Aparfinal[4]*5.430) - exp(Aparfinal[4]*5.350)))/scale;
   
   double bgscale_p = Ip_p/Ip_b;
   double bgscale_m = Im_p/Im_b;
@@ -550,17 +591,34 @@ void drawFitDalitz() {
   }
   
   
-  TCanvas *c14 = new TCanvas("c14","",600,500);
+  TCanvas *c14 = new TCanvas("c14","",600,400);
+  TPad* p1D=new TPad("p1","",0.0,0,1.0,1.0,0);
+    p1D->SetBottomMargin(0.15);
+    p1D->SetLeftMargin(0.15);
+    p1D->SetRightMargin(0.2);
+    p1D->SetTopMargin(0.05);
+    p1D->Draw();
+	p1D->cd();
   hdalitzass_corr->SetStats(0);
+  hdalitzass_corr->SetTitle("");
   hdalitzass_corr->GetXaxis()->SetTitle("M_{K#pi}^{2} [GeV^{2}/c^{4}]");
   hdalitzass_corr->GetXaxis()->SetTitleSize(.05);
   hdalitzass_corr->GetXaxis()->SetLabelSize(.05);
   hdalitzass_corr->GetYaxis()->SetTitle("M_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
   hdalitzass_corr->GetYaxis()->SetTitleSize(.05);
   hdalitzass_corr->GetYaxis()->SetLabelSize(.05);
+  hdalitzass_corr->GetZaxis()->SetTitle("Asymmetry");
+  hdalitzass_corr->GetZaxis()->SetTitleSize(.05);
   hdalitzass_corr->GetZaxis()->SetLabelSize(.05);
-  hdalitzass_corr->GetXaxis()->SetRange(-1, 32);
-  hdalitzass_corr->GetYaxis()->SetRange(-1, 30);
+  hdalitzass_corr->GetXaxis()->SetRange(-1, 30);
+  hdalitzass_corr->GetYaxis()->SetRange(-1, 28);
+  
+  hdalitzass_corr->SetTitleSize(0.065,"XYZ");
+  hdalitzass_corr->SetLabelSize(0.065,"XYZ");
+  hdalitzass_corr->SetLabelOffset(0.01,"XYZ");
+  hdalitzass_corr->SetLabelFont(132, "XYZ");
+  hdalitzass_corr->SetTitleFont(132, "XYZ");
+  
   hdalitzass_corr->SetMaximum(1);
   hdalitzass_corr->SetMinimum(-1);
   c14->SetBottomMargin(0.11);
@@ -590,10 +648,10 @@ void drawFitDalitz() {
 
   //fit
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
-  TF1 *Signal_CP = new TF1("Signal_CP", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
-  TF1 *Background_CP = new TF1("Background_CP", "expo", 5279.29+80, 5700 );
-  TF1 *CombBG_CP = new TF1("CombBG_CP", "gausn", 5035, 5279.29-80);
-  TF1 *total_CP = new TF1("total_CP","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *Signal_CP = new TF1("Signal_CP", "gausn", 5.240, 5.300); //5279.29-40 ,5279.29+50);
+  TF1 *Background_CP = new TF1("Background_CP", "expo", 5.27929+0.080, 5.700 );
+  TF1 *CombBG_CP = new TF1("CombBG_CP", "gausn", 5.035, 5.27929-0.080);
+  TF1 *total_CP = new TF1("total_CP","gausn(0) + expo(3) + gausn(5)",5.035,5.700);
   
   hmass_CP->Fit(Signal_CP, "R");
   hmass_CP->Fit(Background_CP, "RN+");
@@ -615,9 +673,9 @@ void drawFitDalitz() {
   total_CP->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
 	  
   
-  TF1 *DrawSignal_CP = new TF1("DrawSignal_CP", "gausn", 5035 ,5700);
-  TF1 *DrawBackground_CP = new TF1("DrawBackground_CP", "expo", 5035 ,5700);
-  TF1 *DrawCombBG_CP = new TF1("DrawCombBG_CP", "gausn", 5035 ,5700);
+  TF1 *DrawSignal_CP = new TF1("DrawSignal_CP", "gausn", 5.035 ,5.700);
+  TF1 *DrawBackground_CP = new TF1("DrawBackground_CP", "expo", 5.035 ,5.700);
+  TF1 *DrawCombBG_CP = new TF1("DrawCombBG_CP", "gausn", 5.035 ,5.700);
   DrawSignal_CP->SetParameters(&parfinal_CP[0]);
   DrawBackground_CP->SetParameters(&parfinal_CP[3]);
   DrawCombBG_CP->SetParameters(&parfinal_CP[5]);
@@ -628,7 +686,7 @@ void drawFitDalitz() {
   
   hmass_CP->Draw("E1");
   
-  hmass_CP->SetAxisRange(5090, 5500., "X");
+  hmass_CP->SetAxisRange(5.090, 5.500, "X");
   hmass_CP->SetAxisRange(-2., 150., "Y");
   
   total_CP->Draw("same");
@@ -657,28 +715,49 @@ void drawFitDalitz() {
   TH1F *hmass_CP_p = (TH1F*)ft->Get("h_CP_massB_p");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c15 = new TCanvas("c15","",600,500);
-  // Draw the first histogram with a blue line, and an x-axis title
-  gStyle->SetOptStat("e");
-  gStyle->SetOptFit(1111);
-  gStyle->SetStatFormat("6.6g");
+  TCanvas *c15 = new TCanvas("c15","",1000,500);
   
+  TPad* p1CP=new TPad("p1CP","",0.0,0,0.5,1.0,0);
+  p1CP->SetBottomMargin(0.15);
+  p1CP->SetLeftMargin(0.2);
+  p1CP->SetRightMargin(0.0);
+  p1CP->SetTopMargin(0.025);
+  p1CP->Draw();
+  TPad* p2CP=new TPad("p2CP","",0.5,0,1.0,1.0,0);
+  p2CP->SetBottomMargin(0.15);
+  p2CP->SetLeftMargin(0.0);
+  p2CP->SetRightMargin(0.2);
+  p2CP->SetTopMargin(0.025);
+  p2CP->Draw();
+  p1CP->cd();
+  
+  // Draw the first histogram with a blue line, and an x-axis title
+  //gStyle->SetOptStat(0);
+  //gStyle->SetOptFit(1111);
+  //gStyle->SetStatFormat("6.6g");
+  
+  // Draw the first histogram with a blue line, and an x-axis title
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(0000);
+  //gStyle->SetStatFormat("6.6g");
+  gStyle->SetLineWidth(2);
   hmass_CP_p->SetLineColor(kBlue);
-  hmass_CP_p->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
-  hmass_CP_p->GetXaxis()->SetTitleSize(.05);
-  hmass_CP_p->GetXaxis()->SetLabelSize(.05);
-  hmass_CP_p->GetYaxis()->SetTitle("Events/Bin");
-  hmass_CP_p->GetYaxis()->SetTitleSize(.05);
-  hmass_CP_p->GetYaxis()->SetLabelSize(.05);
+  hmass_CP_p->GetXaxis()->SetTitle("M_{K^{+} #pi^{+} #pi^{-}} [GeV/c^{2}]");
+  hmass_CP_p->GetYaxis()->SetTitle("Events/(0.01 GeV/c^{2})");
+  hmass_CP_p->SetTitleSize(0.065,"XYZ");
+  hmass_CP_p->SetLabelSize(0.065,"XYZ");
+  hmass_CP_p->SetLabelOffset(0.01,"XYZ");
+  hmass_CP_p->SetLabelFont(132, "XYZ");
+  hmass_CP_p->SetTitleFont(132, "XYZ");
   
   
 
   //fit
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
-  TF1 *MSignal_CP = new TF1("MSignal_CP", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
-  TF1 *MBackground_CP = new TF1("MBackground_CP", "expo", 5279.29+80, 5700 );
-  TF1 *MCombBG_CP = new TF1("MCombBG_CP", "gausn", 5035, 5279.29-80);
-  TF1 *Mtotal_CP = new TF1("Mtotal_CP","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *MSignal_CP = new TF1("MSignal_CP", "gausn", 5.240, 5.300); //5279.29-40 ,5279.29+50);
+  TF1 *MBackground_CP = new TF1("MBackground_CP", "expo", 5.27929+0.080, 5.700 );
+  TF1 *MCombBG_CP = new TF1("MCombBG_CP", "gausn", 5.035, 5.27929-0.080);
+  TF1 *Mtotal_CP = new TF1("Mtotal_CP","gausn(0) + expo(3) + gausn(5)",5.035,5.700);
   
   MSignal_CP->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
   MSignal_CP->SetParLimits(2, parfinal_CP[2]-2*total_CP->GetParError(2), parfinal_CP[2]+2*total_CP->GetParError(2));
@@ -708,9 +787,9 @@ void drawFitDalitz() {
   Mtotal_CP->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
 	  
   
-  TF1 *MDrawSignal_CP = new TF1("MDrawSignal_CP", "gausn", 5035 ,5700);
-  TF1 *MDrawBackground_CP = new TF1("MDrawBackground_CP", "expo", 5035 ,5700);
-  TF1 *MDrawCombBG_CP = new TF1("MDrawCombBG_CP", "gausn", 5035 ,5700);
+  TF1 *MDrawSignal_CP = new TF1("MDrawSignal_CP", "gausn", 5.035 ,5.700);
+  TF1 *MDrawBackground_CP = new TF1("MDrawBackground_CP", "expo", 5.035 ,5.700);
+  TF1 *MDrawCombBG_CP = new TF1("MDrawCombBG_CP", "gausn", 5.035 ,5.700);
   MDrawSignal_CP->SetParameters(&Mparfinal_CP[0]);
   MDrawBackground_CP->SetParameters(&Mparfinal_CP[3]);
   MDrawCombBG_CP->SetParameters(&Mparfinal_CP[5]);
@@ -721,9 +800,10 @@ void drawFitDalitz() {
   
   hmass_CP_p->Draw("E1");
   hmass_CP_p->SetAxisRange(-1., 90., "Y");
-  hmass_CP_p->SetAxisRange(5090, 5500, "X");
+  hmass_CP_p->SetAxisRange(5.090, 5.450, "X");
   hmass_CP_p->GetXaxis()->SetNdivisions(506);
   hmass_CP_p->SetLineColor(kBlack);
+  hmass_CP_p->SetLineWidth(1);
   
   Mtotal_CP->Draw("same");
   Mtotal_CP->SetLineColor(kBlue);
@@ -745,45 +825,57 @@ void drawFitDalitz() {
   MDrawCombBG_CP->SetLineWidth(2);
   MDrawCombBG_CP->SetLineStyle(7);
   
-  auto legend4 = new TLegend(0.6,0.7,0.95,0.95);
-  legend4->AddEntry(Mtotal_CP,"Total","l");
-  legend4->AddEntry(MDrawSignal_CP,"Signal","l");
-  legend4->AddEntry(MDrawBackground_CP,"Combinatorial","l");
-  legend4->AddEntry(MDrawCombBG_CP,"4-body","l");
-  legend4->Draw();
+  //auto legend4 = new TLegend(0.6,0.7,0.95,0.95);
+  //legend4->AddEntry(Mtotal_CP,"Total","l");
+  //legend4->AddEntry(MDrawSignal_CP,"Signal","l");
+  //legend4->AddEntry(MDrawBackground_CP,"Combinatorial","l");
+  //legend4->AddEntry(MDrawCombBG_CP,"4-body","l");
+  //legend4->Draw();
+  //
+  //
+  //c15->SaveAs("CP_massB_p.pdf");
+  p2CP->cd();
   
-  
-  c15->SaveAs("CP_massB_p.pdf");
-
   //B MINUS---------------------------------------------
   //m = minus = A
   TH1F *hmass_CP_m = (TH1F*)ft->Get("h_CP_massB_m");
 
   // Create a canvas onto which the histograms are plotted and which can be saved
-  TCanvas *c16 = new TCanvas("c16","",600,500);
+  //TCanvas *c16 = new TCanvas("c16","",600,500);
   // Draw the first histogram with a blue line, and an x-axis title
-  gStyle->SetOptStat("e");
-  gStyle->SetOptFit(1111);
-  gStyle->SetStatFormat("6.6g");
+  gStyle->SetOptStat(0);
+  //gStyle->SetOptFit(1111);
+  //gStyle->SetStatFormat("6.6g");
   
   hmass_CP_m->SetLineColor(kBlue);
-  hmass_CP_m->GetXaxis()->SetTitle("Invariant Mass [MeV/c^{2}]");
+  hmass_CP_m->GetXaxis()->SetTitle("M_{K^{-} #pi^{+} #pi^{-}} [GeV/c^{2}]");
   hmass_CP_m->GetXaxis()->SetTitleSize(.05);
   hmass_CP_m->GetXaxis()->SetLabelSize(.05);
-  hmass_CP_m->GetYaxis()->SetTitle("Events/Bin");
+  hmass_CP_m->GetYaxis()->SetTitle("Events/0.01");
   hmass_CP_m->GetYaxis()->SetTitleSize(.05);
   hmass_CP_m->GetYaxis()->SetLabelSize(.05);
+  hmass_CP_m->SetTitleSize(0.065,"XYZ");
+  hmass_CP_m->SetLabelSize(0.065,"XYZ");
+  hmass_CP_m->SetLabelOffset(0.01,"XYZ");
+  hmass_CP_m->SetLabelFont(132, "XYZ");
+  hmass_CP_m->SetTitleFont(132, "XYZ");
   
 
   //fit
  
-  TF1 *ASignal_CP = new TF1("ASignal_CP", "gausn", 5279.29-40 ,5279.29+50);
-  TF1 *ABackground_CP = new TF1("ABackground_CP", "expo", 5279.29+80, 5700 );
-  TF1 *ACombBG_CP = new TF1("ACombBG_CP", "gausn", 5035, 5279.29-80);
-  TF1 *Atotal_CP = new TF1("Atotal_CP","gausn(0) + expo(3) + gausn(5)",5035,5700);
+  TF1 *ASignal_CP = new TF1("ASignal_CP", "gausn", 5.27929-0.040 ,5.27929+0.050);
+  TF1 *ABackground_CP = new TF1("ABackground_CP", "expo", 5.27929+0.080, 5.700 );
+  TF1 *ACombBG_CP = new TF1("ACombBG_CP", "gausn", 5.035, 5.27929-0.080);
+  TF1 *Atotal_CP = new TF1("Atotal_CP","gausn(0) + expo(3) + gausn(5)",5.035,5.700);
   
   ASignal_CP->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
   ASignal_CP->SetParLimits(2, parfinal_CP[2]-2*total_CP->GetParError(2), parfinal_CP[2]+2*total_CP->GetParError(2));
+  //for rho
+  //ACombBG_CP->SetParLimits(0, parfinal_CP[3]-1*total_CP->GetParError(3), parfinal_CP[3]+1*total_CP->GetParError(3));
+  //ACombBG_CP->SetParLimits(1, parfinal_CP[4]-1*total_CP->GetParError(4), parfinal_CP[4]+1*total_CP->GetParError(4));
+  //
+  //ABackground_CP->SetParLimits(1, parfinal_CP[6]-2*total_CP->GetParError(6), parfinal_CP[6]+2*total_CP->GetParError(6));
+  //ABackground_CP->SetParLimits(2, parfinal_CP[7]-2*total_CP->GetParError(7), parfinal_CP[7]+2*total_CP->GetParError(7));
   
 
   hmass_CP_m->Fit(ASignal_CP, "RN");
@@ -798,6 +890,13 @@ void drawFitDalitz() {
   Atotal_CP->SetParameters(Apar_CP);
   Atotal_CP->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
   Atotal_CP->SetParLimits(2, parfinal_CP[2]-2*total_CP->GetParError(2), parfinal_CP[2]+2*total_CP->GetParError(2));
+  //for rho
+  //Atotal_CP->SetParLimits(3, parfinal_CP[3]-1*total_CP->GetParError(3), parfinal_CP[3]+1*total_CP->GetParError(3));
+  //Atotal_CP->SetParLimits(4, parfinal_CP[4]-1*total_CP->GetParError(4), parfinal_CP[4]+1*total_CP->GetParError(4));
+  //
+  //Atotal_CP->SetParLimits(6, parfinal_CP[6]-2*total_CP->GetParError(6), parfinal_CP[6]+2*total_CP->GetParError(6));
+  //Atotal_CP->SetParLimits(7, parfinal_CP[7]-2*total_CP->GetParError(7), parfinal_CP[7]+2*total_CP->GetParError(7));
+  
   hmass_CP_m->Fit(Atotal_CP, "ROME");
 	
   
@@ -807,9 +906,9 @@ void drawFitDalitz() {
   Mtotal_CP->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
 	  
   
-  TF1 *ADrawSignal_CP = new TF1("ADrawSignal_CP", "gausn", 5035 ,5700);
-  TF1 *ADrawBackground_CP = new TF1("ADrawBackground_CP", "expo", 5035 ,5700);
-  TF1 *ADrawCombBG_CP = new TF1("ADrawCombBG_CP", "gausn", 5035 ,5700);
+  TF1 *ADrawSignal_CP = new TF1("ADrawSignal_CP", "gausn", 5.035 ,5.700);
+  TF1 *ADrawBackground_CP = new TF1("ADrawBackground_CP", "expo", 5.035 ,5.700);
+  TF1 *ADrawCombBG_CP = new TF1("ADrawCombBG_CP", "gausn", 5.035 ,5.700);
   ADrawSignal_CP->SetParameters(&Aparfinal_CP[0]);
   ADrawBackground_CP->SetParameters(&Aparfinal_CP[3]);
   ADrawCombBG_CP->SetParameters(&Aparfinal_CP[5]);
@@ -820,9 +919,10 @@ void drawFitDalitz() {
   
   hmass_CP_m->Draw("E1");
   hmass_CP_m->SetAxisRange(-1., 90., "Y");
-  hmass_CP_m->SetAxisRange(5090, 5500, "X");
+  hmass_CP_m->SetAxisRange(5.090, 5.450, "X");
   hmass_CP_m->GetXaxis()->SetNdivisions(506);
   hmass_CP_m->SetLineColor(kBlack);
+  hmass_CP_m->SetLineWidth(1);
   
   Atotal_CP->Draw("same");
   Atotal_CP->SetLineColor(kBlue);
@@ -844,18 +944,22 @@ void drawFitDalitz() {
   ADrawCombBG_CP->SetLineWidth(2);
   ADrawCombBG_CP->SetLineStyle(7);
   
-  auto legend3 = new TLegend(0.6,0.7,0.95,0.95);
+  auto legend3 = new TLegend(0.52,0.67,0.9,0.98);
   legend3->AddEntry(Atotal_CP,"Total","l");
   legend3->AddEntry(ADrawSignal_CP,"Signal","l");
-  legend3->AddEntry(ADrawBackground_CP,"Combinatorial","l");
+  legend3->AddEntry(ADrawBackground_CP,"Comb.","l");
   legend3->AddEntry(ADrawCombBG_CP,"4-body","l");
+  legend3->SetBorderSize(0);
+  legend3->SetFillStyle(0);
+  legend3->SetTextFont(132);
   legend3->Draw();
  
   
   //Asubtracted_CP->Draw("same");
+  c15->Size(20, 10);
+  c15->SaveAs("CP_massB_pm.pdf");
   
   
-  c16->SaveAs("CP_massB_m.pdf");
   
   //CP ASSYMETRY
   double scale_CP = hmass_CP->GetXaxis()->GetBinWidth(1);
@@ -886,11 +990,11 @@ void drawFitDalitz() {
   gStyle->SetOptFit(1111);
   gStyle->SetStatFormat("6.6g");
   
-  cout << "\n bin: "<< hmass_CP2->GetBinContent(6) << "\n";
-  
-  for (int x; x < 65; x++){
-	  cout << "\n bin: "<< hmass_CP2->GetBinContent(x) << "\n";
-  }
+  //cout << "\n bin: "<< hmass_CP2->GetBinContent(6) << "\n";
+  //
+  //for (int x; x < 65; x++){
+  //	  cout << "\n bin: "<< hmass_CP2->GetBinContent(x) << "\n";
+  //}
   
   hmass_CP2->SetLineColor(kBlue);
   hmass_CP2->GetXaxis()->SetTitle("Mass [GeV/c^{2}]");
@@ -900,10 +1004,16 @@ void drawFitDalitz() {
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
   TF1 *Signal_CP2 = new TF1("Signal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
   TF1 *Background_CP2 = new TF1("Background_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *CombBG_CP2 = new TF1("CombBG_CP2", "landau", 5035, 5279.29-80);
-  TF1 *total_CP2 = new TF1("total_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
+  TF1 *CombBG_CP2 = new TF1("CombBG_CP2", "gausn", 5035, 5279.29-80);
+  TF1 *total_CP2 = new TF1("total_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
   
-  hmass_CP2->Fit(Signal_CP2, "R");
+  //CombBG_CP2->FixParameter(0, 0);
+  //CombBG_CP2->FixParameter(1, 0);
+  //CombBG_CP2->FixParameter(2, 0);
+  
+  //CombBG_CP2->SetParLimits(0, 0, 10e10);
+  
+  hmass_CP2->Fit(Signal_CP2, "RN");
   hmass_CP2->Fit(Background_CP2, "RN+");
   hmass_CP2->Fit(CombBG_CP2, "RN+");
   
@@ -914,6 +1024,9 @@ void drawFitDalitz() {
   CombBG_CP2->GetParameters(&par_CP2[5]);
 	
   total_CP2->SetParameters(par_CP2);
+  total_CP2->SetParLimits(5, 0, par_CP2[5]+4*CombBG_CP2->GetParError(5));
+  //total_CP2->SetParLimits(6, par_CP2[6]-10*CombBG_CP2->GetParError(6), par_CP2[6]+10*CombBG_CP2->GetParError(6));
+  //total_CP2->SetParLimits(7, par_CP2[7]-10*CombBG_CP2->GetParError(7), par_CP2[7]+10*CombBG_CP2->GetParError(7));
   hmass_CP2->Fit(total_CP2, "ROME");
 	
   
@@ -925,7 +1038,7 @@ void drawFitDalitz() {
   
   TF1 *DrawSignal_CP2 = new TF1("DrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *DrawBackground_CP2 = new TF1("DrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *DrawCombBG_CP2 = new TF1("DrawCombBG_CP2", "landau", 5035 ,5700);
+  TF1 *DrawCombBG_CP2 = new TF1("DrawCombBG_CP2", "gausn", 5035 ,5700);
   DrawSignal_CP2->SetParameters(&parfinal_CP2[0]);
   DrawBackground_CP2->SetParameters(&parfinal_CP2[3]);
   DrawCombBG_CP2->SetParameters(&parfinal_CP2[5]);
@@ -984,11 +1097,17 @@ void drawFitDalitz() {
   //(1/([2]*pow(2*pi, 0.5)))*[0]*exp(-(1./2)*pow(((x-[1])/[2]), 2))
   TF1 *MSignal_CP2 = new TF1("MSignal_CP2", "gausn", 5240, 5300); //5279.29-40 ,5279.29+50);
   TF1 *MBackground_CP2 = new TF1("MBackground_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *MCombBG_CP2 = new TF1("MCombBG_CP2", "landau", 5035, 5279.29-80);
-  TF1 *Mtotal_CP2 = new TF1("Mtotal_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
+  TF1 *MCombBG_CP2 = new TF1("MCombBG_CP2", "gausn", 5035, 5279.29-80);
+  TF1 *Mtotal_CP2 = new TF1("Mtotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
   
   MSignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
   MSignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
+  
+  //MCombBG_CP2->SetParLimits(0, 0, parfinal_CP2[5]+2*total_CP2->GetParError(5));
+  
+  //MCombBG_CP2->FixParameter(0, 0);
+  //MCombBG_CP2->FixParameter(1, 0);
+  //MCombBG_CP2->FixParameter(2, 0);
   
   hmass_CP2_p->Fit(MSignal_CP2, "RNB");
   hmass_CP2_p->Fit(MBackground_CP2, "RN+");
@@ -1006,6 +1125,11 @@ void drawFitDalitz() {
   Mtotal_CP2->SetParameters(Mpar_CP2);
   Mtotal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
   Mtotal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
+  Mtotal_CP2->SetParLimits(5, 0, 10e10); //parfinal_CP[5]+10*total_CP->GetParError(5));
+  //Mtotal_CP2->FixParameter(5, 0);
+  //Mtotal_CP2->FixParameter(6, 0);
+  //Mtotal_CP2->FixParameter(7, 0);
+  Mtotal_CP2->SetParLimits(7, 0, 10e3);
   Mtotal_CP2->SetParNames("Signal G C", "Signal G M", "Signal G #sigma", "BG E C", "BG E M", "Comb BG G C", "Comb BG G M", "Comb BG G #sigma");
   hmass_CP2_p->Fit(Mtotal_CP2, "ROMEB");
 	
@@ -1018,7 +1142,7 @@ void drawFitDalitz() {
   
   TF1 *MDrawSignal_CP2 = new TF1("MDrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *MDrawBackground_CP2 = new TF1("MDrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *MDrawCombBG_CP2 = new TF1("MDrawCombBG_CP2", "landau", 5035 ,5700);
+  TF1 *MDrawCombBG_CP2 = new TF1("MDrawCombBG_CP2", "gausn", 5035 ,5700);
   MDrawSignal_CP2->SetParameters(&Mparfinal_CP2[0]);
   MDrawBackground_CP2->SetParameters(&Mparfinal_CP2[3]);
   MDrawCombBG_CP2->SetParameters(&Mparfinal_CP2[5]);
@@ -1090,12 +1214,19 @@ void drawFitDalitz() {
  
   TF1 *ASignal_CP2 = new TF1("ASignal_CP2", "gausn", 5279.29-40 ,5279.29+50);
   TF1 *ABackground_CP2 = new TF1("ABackground_CP2", "expo", 5279.29+80, 5700 );
-  TF1 *ACombBG_CP2 = new TF1("ACombBG_CP2", "landau", 5035, 5279.29-80);
-  TF1 *Atotal_CP2 = new TF1("Atotal_CP2","gausn(0) + expo(3) + landau(5)",5035,5700);
+  TF1 *ACombBG_CP2 = new TF1("ACombBG_CP2", "gausn", 5035, 5279.29-80);
+  TF1 *Atotal_CP2 = new TF1("Atotal_CP2","gausn(0) + expo(3) + gausn(5)",5035,5700);
   
   ASignal_CP2->SetParLimits(1, parfinal_CP2[1]-2*total_CP2->GetParError(1), parfinal_CP2[1]+2*total_CP2->GetParError(1));
   ASignal_CP2->SetParLimits(2, parfinal_CP2[2]-2*total_CP2->GetParError(2), parfinal_CP2[2]+2*total_CP2->GetParError(2));
   
+  //ACombBG_CP2->SetParLimits(0, 0, parfinal_CP2[5]+2*total_CP2->GetParError(5));
+  //ACombBG_CP2->SetParLimits(1, parfinal_CP2[6]-2*total_CP2->GetParError(6), parfinal_CP2[6]+2*total_CP2->GetParError(6));
+  //ACombBG_CP2->SetParLimits(2, parfinal_CP2[7]-2*total_CP2->GetParError(7), parfinal_CP2[7]+2*total_CP2->GetParError(7));
+  
+  //MCombBG_CP2->FixParameter(0, 0);
+  //MCombBG_CP2->FixParameter(1, 0);
+  //MCombBG_CP2->FixParameter(2, 0);
 
   hmass_CP2_m->Fit(ASignal_CP2, "RNB");
   hmass_CP2_m->Fit(ABackground_CP2, "RN+");
@@ -1109,6 +1240,10 @@ void drawFitDalitz() {
   Atotal_CP2->SetParameters(Apar_CP);
   Atotal_CP2->SetParLimits(1, parfinal_CP[1]-2*total_CP->GetParError(1), parfinal_CP[1]+2*total_CP->GetParError(1));
   Atotal_CP2->SetParLimits(2, parfinal_CP[2]-2*total_CP->GetParError(2), parfinal_CP[2]+2*total_CP->GetParError(2));
+  Atotal_CP2->SetParLimits(5, 0, 10e10);
+  //Atotal_CP2->SetParLimits(6, parfinal_CP[6]-2*total_CP->GetParError(6), parfinal_CP[6]+2*total_CP->GetParError(6));
+  Atotal_CP2->SetParLimits(6, 0, 10e3);
+  Atotal_CP2->SetParLimits(7, 0, 10e3);
   hmass_CP2_m->Fit(Atotal_CP2, "ROMEB");
 	
   
@@ -1120,7 +1255,7 @@ void drawFitDalitz() {
   
   TF1 *ADrawSignal_CP2 = new TF1("ADrawSignal_CP2", "gausn", 5035 ,5700);
   TF1 *ADrawBackground_CP2 = new TF1("ADrawBackground_CP2", "expo", 5035 ,5700);
-  TF1 *ADrawCombBG_CP2 = new TF1("ADrawCombBG_CP2", "landau", 5035 ,5700);
+  TF1 *ADrawCombBG_CP2 = new TF1("ADrawCombBG_CP2", "gausn", 5035 ,5700);
   ADrawSignal_CP2->SetParameters(&Aparfinal_CP2[0]);
   ADrawBackground_CP2->SetParameters(&Aparfinal_CP2[3]);
   ADrawCombBG_CP2->SetParameters(&Aparfinal_CP2[5]);

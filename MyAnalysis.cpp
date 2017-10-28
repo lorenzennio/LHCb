@@ -27,11 +27,11 @@ void MyAnalysis::BookHistos() {
   h_massR_K_Bmas  = new TH1F("h_massR_K_Bmas", "", 100, 5200, 5400);
   h_massR_Pi_Jmas  = new TH1F("h_massR_Pi_Jmas", "", 100, 3000, 3200);
   h_massB_sel2 = new TH1F("h_massB_sel2", "", 200, 5050,5650);
-  h_massB_p = new TH1F("h_massB_p", "", 200, 5050,5650);
-  h_massB_m = new TH1F("h_massB_m", "", 200, 5050,5650);
-  h_CP_massB = new TH1F("h_CP_massB", "", 65, 5020,5700);
-  h_CP_massB_p = new TH1F("h_CP_massB_p", "", 65, 5020,5700);
-  h_CP_massB_m = new TH1F("h_CP_massB_m", "", 65, 5020,5700);
+  h_massB_p = new TH1F("h_massB_p", "", 200, 5.050,5.650);
+  h_massB_m = new TH1F("h_massB_m", "", 200, 5.050,5.650);
+  h_CP_massB = new TH1F("h_CP_massB", "", 65, 5.020,5.700);
+  h_CP_massB_p = new TH1F("h_CP_massB_p", "", 65, 5.020,5.700);
+  h_CP_massB_m = new TH1F("h_CP_massB_m", "", 65, 5.020,5.700);
   h_CP_massB2 = new TH1F("h_CP_massB2", "", 65, 5020,5700);
   h_CP_massB2_p = new TH1F("h_CP_massB2_p", "", 65, 5020,5700);
   h_CP_massB2_m = new TH1F("h_CP_massB2_m", "", 65, 5020,5700);
@@ -43,8 +43,8 @@ void MyAnalysis::BookHistos() {
 //variable bin width
   const Int_t xNBINS = 12;
   Double_t xedges[xNBINS + 1] = {0.2, 0.6, 0.8, 1., 1.2, 1.8, 2.4, 3. , 7., 15., 21., 25., 28.};
-  const Int_t yNBINS = 12;
-  Double_t yedges[yNBINS + 1] = {0., 0.6, 0.9, 1., 1.2, 1.8, 3. , 7., 10., 12.,  15.,  21., 28.};
+  const Int_t yNBINS = 13;
+  Double_t yedges[yNBINS + 1] = {0., 0.6, 0.9, 1., 1.2, 1.8, 3. , 7., 10., 12.,  15.,  21., 28., 30.};
 //{0.0, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.7, 2.0, 2.5, 3., 3.5, 4., 5., 6., 7., 8., 10., 12., 15., 18., 21., 25., 30., 35.};
   h_dalitz_sim = new TH2F("h_dalitz_sim","",200,0,25,200,0,25);
   h_dalitz = new TH2F("h_dalitz","",200,-3,35,200,-3,35);
@@ -356,7 +356,8 @@ void MyAnalysis::Execute() {
   //if(massR_K > 980- && massR_K < 980+500){
   //	  return;
   //}
-  //if(massR_Pi < 770+50 && massR_Pi > 770-50){
+  //if(massR_Pi < 770+100 && massR_Pi > 770-100){
+  ////if(massR_Pi > 770+100 || massR_Pi < 770-100){
   //	 return;
   //}
   //if(massR_K < 892-100 || massR_K > 892+100){
@@ -391,17 +392,17 @@ void MyAnalysis::Execute() {
 
   //5.5
    double massB3  = invMass(HK_PX, HK_PY, HK_PZ, HPi1_PX, HPi1_PY, HPi1_PZ, HPi2_PX, HPi2_PY, HPi2_PZ, massK, massPi, massPi);
-   h_massB_sel2->Fill(massB3);
+   h_massB_sel2->Fill(massB3/1000);
    
    
    //MATTER or ANTIMATTER
    
    if(HK_Charge == 1){
 	   //B+
-	   h_massB_p->Fill(massB2);
+	   h_massB_p->Fill(massB2/1000);
    } else if (HK_Charge == -1){
 	   //B-
-	   h_massB_m->Fill(massB2);
+	   h_massB_m->Fill(massB2/1000);
    }
    
    
@@ -434,14 +435,14 @@ void MyAnalysis::Execute() {
    //pick region from dalitz plot and make three body 
    
    if((pow(massR_K/1000., 2) >= 0 && pow(massR_K/1000., 2) <= 15) && (pow(massR_Pi/1000., 2) >= 0 && pow(massR_Pi/1000., 2) <= 0.6)){
-	   h_CP_massB->Fill(massB2);
+	   h_CP_massB->Fill(massB2/1000);
 	   
 	   if(HK_Charge == 1){
 		   //B+
-		   h_CP_massB_p->Fill(massB2);
+		   h_CP_massB_p->Fill(massB2/1000);
 	   } else if (HK_Charge == -1){
 		   //B-
-		   h_CP_massB_m->Fill(massB2);
+		   h_CP_massB_m->Fill(massB2/1000);
 	   }
 	
    }

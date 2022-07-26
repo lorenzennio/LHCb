@@ -1,0 +1,28 @@
+void drawOutput() {
+  //////////////////////
+  // Example Root Macro for third year B->hhh Lab
+  ////////////////////// 
+
+  // Open the root file that was produced by running the example program
+  TFile *f = new TFile("outputPhaseSpace.root");
+
+  // Get pointers to the example histograms that were made 
+  TH1F *hx = (TH1F*)f->Get("h_PX");
+  TH1F *hy = (TH1F*)f->Get("h_PY");
+  TH2F *hxy = (TH2F*)f->Get("h_TXTY");
+
+  TCanvas *c1 = new TCanvas("c1","",600,400);
+  // Draw the first histogram with a blue line
+  hx->SetLineColor(kBlue);
+  hx->Draw();
+
+  // Draw the second histogram on the same plot with a red line
+  hy->SetLineColor(kRed);
+  hy->Draw("same");
+
+  c1->SaveAs("hx_hy.pdf");
+
+  TCanvas *c2 = new TCanvas("c2","",600,400);
+  hxy->Draw("colz");
+  c2->SaveAs("hxy.pdf");
+}

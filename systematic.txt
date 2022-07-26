@@ -33,7 +33,7 @@ any			any			landau		--			--			--
 
 local region 1
 4 body BG 	comb. BG 	signal		chi2 p		chi2 m		A
-gausn		exp			gausn		44/56		83/56		0.675533+/-0.031468+/-0.0540506
+gausn		exp			gausn		44/56		83/56		0.701119+/-0.029207+/-0.0509427
 gausn		pol1		gausn		44/56		75/56		0.753391+/-0.0244278+/-0.0426108
 landau		pol1		gausn		46/56		77/56		0.810294+/-0.0239526+/-0.040638
 landau		exp			gausn		46/56		78/56		0.820278+/-0.0241542+/-0.0348778
@@ -41,12 +41,16 @@ any			any			landau		--			--			--
 
 
 local region 2
+		 	comb. BG 	signal		chi2 p		chi2 m		A
+			exp			gausn		83/59		81/59		-0.252724+/-0.0244845+/-0.0495251
+			pol1		gausn		87/59		77/59		-0.267585+/-0.0253268+/-0.0585924
+			
 4 body BG 	comb. BG 	signal		chi2 p		chi2 m		A
-gausn		exp			gausn		75/56		63/56		-0.253856+/-0.0259087+/-0.0611534
-gausn		pol1		gausn		66/56		69/56		-0.296284+/-0.0264822+/-0.0717751
-landau		pol1		gausn		68/56		76/56		-0.235093+/-0.0259281+/-0.0614498
-landau		exp			gausn		82/56		76/56		-0.297835+/-0.0245887+/-0.0573224 
-any			any			landau		
+gausn		exp			gausn		83/56		81/56		-0.252728+/-0.0244844+/-0.00936056
+gausn		pol1		gausn		66/56		69/56		-0.296213+/-0.026485+/-0.0717629
+landau		pol1		gausn		86/56		77/56		-0.278104+/-0.0250574+/-0.0551042
+landau		exp			gausn		83/56		81/56		-0.252722+/-0.0244846+/-0.000433965
+any			any			landau		--			--			--
 
 
 

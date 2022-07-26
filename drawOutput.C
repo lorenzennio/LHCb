@@ -123,6 +123,9 @@ void drawOutput() {
   legend2->AddEntry(massR_Pi,"M_{#pi#pi}","l");
   legend2->Draw();
   
+  //massR_K->SetAxisRange(0, 120., "Y");
+  //massR_K->SetAxisRange(0, 1000, "X");
+  
   c6->SaveAs("resonance.pdf");
   
   //D meson peak in 5.3

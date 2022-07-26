@@ -1,0 +1,9 @@
+void drawOutput() {
+  TFile *f = new TFile("outputPhaseSpace.root");
+  TH1F *hx = (TH1F*)f->Get("h_PX");
+  TH1F *hy = (TH1F*)f->Get("h_PY");
+  hy->SetLineColor(kBlue);
+  hx->Draw();
+  hy->SetLineColor(kRed);
+  hy->Draw("same");
+}

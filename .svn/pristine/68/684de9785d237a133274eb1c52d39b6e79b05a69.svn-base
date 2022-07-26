@@ -1,0 +1,20 @@
+void drawOutput() {
+  //////////////////////
+  // Example Root Macro for third year B->hhh Lab
+  ////////////////////// 
+
+  // Open the root file that was produced by running the example program
+  TFile *f = new TFile("outputPhaseSpace.root");
+
+  // Get pointers to the example histograms that were made 
+  TH1F *hx = (TH1F*)f->Get("h_PX");
+  TH1F *hy = (TH1F*)f->Get("h_PY");
+
+  // Draw the first histogram with a blue line
+  hx->SetLineColor(kBlue);
+  hx->Draw();
+
+  // Draw the second histogram on the same plot with a red line
+  hy->SetLineColor(kRed);
+  hy->Draw("same");
+}

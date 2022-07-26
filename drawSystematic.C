@@ -12,8 +12,8 @@ void drawSystematic() {
   
   TH2F *UPass_corr 		= (TH2F*)ft->Get("h_dalitz_m");
   TH2F *UPass_err 		= (TH2F*) UPass_corr->Clone();
-  TH2F *DOWNass_corr 	= (TH2F*) UPass_corr->Clone();
-  TH2F *DOWNass_err 	= (TH2F*) UPass_corr->Clone();
+  TH2F *DOWNass_corr 	        = (TH2F*) UPass_corr->Clone();
+  TH2F *DOWNass_err 	        = (TH2F*) UPass_corr->Clone();
   TH2F *UpDownSig 		= (TH2F*) UPass_corr->Clone();
   
   UPass_corr 	->Reset();
@@ -232,7 +232,7 @@ void drawSystematic() {
   	ass_corr->Sumw2();
   	for(int o = 0; o < xbin; o++){
   		for(int p = 0; p < ybin; p++){
-  	   		if(ass_err->GetBinContent(o,p) <= 0. || ass_err->GetBinContent(o,p) >= 0.7){
+  	   		if(ass_err->GetBinContent(o,p) <= 0. || ass_err->GetBinContent(o,p) >= 0.8){
   				ass_corr->SetBinContent(o,p, 0);
   				ass_err->SetBinContent(o,p, 0);
   			}
@@ -303,10 +303,17 @@ c4->SaveAs("DOWN_ass_err.pdf");
 
 
 UpDownSig->Sumw2();
-TCanvas *c5 = new TCanvas("c5","",600,400);
+TCanvas *c5 = new TCanvas("c5","",600,500);
 UpDownSig->SetStats(0);
-UpDownSig->GetXaxis()->SetTitle("Mass_{K#pi}^{2} [GeV^{2}/c^{4}]");
-UpDownSig->GetYaxis()->SetTitle("Mass_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+UpDownSig->GetXaxis()->SetTitle("M_{K#pi}^{2} [GeV^{2}/c^{4}]");
+UpDownSig->GetXaxis()->SetTitleSize(.05);
+UpDownSig->GetXaxis()->SetLabelSize(.05);
+UpDownSig->GetYaxis()->SetTitle("M_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
+UpDownSig->GetYaxis()->SetTitleSize(.05);
+UpDownSig->GetYaxis()->SetLabelSize(.05);
+UpDownSig->GetZaxis()->SetTitle("Significance");
+UpDownSig->GetZaxis()->SetTitleSize(.05);
+UpDownSig->GetZaxis()->SetLabelSize(.05);
 UpDownSig->GetXaxis()->SetRange(-1, 32);
 UpDownSig->GetYaxis()->SetRange(-1, 27);
 for(int q = 0; q < 30; q++){
@@ -316,6 +323,23 @@ for(int q = 0; q < 30; q++){
 		}
 	}
 }
+
+UpDownSig->SetMaximum(3);
+UpDownSig->SetMinimum(-3);
+int xbin = 20;
+int ybin = 20;
+for(int r = 0; r < xbin; r++){
+      for(int t = 0; t < ybin; t++){
+	      if(UPass_corr->GetBinContent(r,t) == 0 || DOWNass_corr->GetBinContent(r,t) == 0){
+		      //cout << "a " <<UPass_corr->GetBinContent(r,t)<< "\n";
+  		      UpDownSig->SetBinContent(r,t, -5);
+		      //cout << "b " <<DOWNass_corr->GetBinContent(r,t)<< "\n";
+  	      }
+      }
+}
+
+
+ 
 UpDownSig->Draw("colz");                          // draw with a colour scale
 c5->SaveAs("UpDown_sig.pdf");
 

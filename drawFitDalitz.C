@@ -607,7 +607,7 @@ void drawFitDalitz() {
   hdalitzass_corr->GetYaxis()->SetTitle("M_{#pi#pi}^{2} [GeV^{2}/c^{4}]");
   hdalitzass_corr->GetYaxis()->SetTitleSize(.05);
   hdalitzass_corr->GetYaxis()->SetLabelSize(.05);
-  hdalitzass_corr->GetZaxis()->SetTitle("Asymmetry");
+  hdalitzass_corr->GetZaxis()->SetTitle("A_{raw}");
   hdalitzass_corr->GetZaxis()->SetTitleSize(.05);
   hdalitzass_corr->GetZaxis()->SetLabelSize(.05);
   hdalitzass_corr->GetXaxis()->SetRange(-1, 30);

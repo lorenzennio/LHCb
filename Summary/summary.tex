@@ -23,22 +23,140 @@
 \item assigned new variables for pion and kaon variables
 \item selection: pion charge sums to 0
 \item found invariant mass of B mason with same technique as before
-\item \textit{what are the sidebands?}
 \end{itemize}
 \item looked at two body resonance - intermediate decay via neutral particle
 \begin{itemize}
-\item want to get rid of  D mason decay as we only study direct decay
-\item selected data of B mason mass $\pm 60~MeV/c^2$ from mass plot - \textit{need to implement that this cut is only applied for this section}
+\item want to get rid of  D mason decay as it decays via c quark and we are interested in b quark
+\item selected data of B mason mass $\pm 60~MeV/c^2$ from mass plot 
 \item three possible intermediate decays: $\pi^+\pi^-$, $K^+\pi^+$ and $K^-\pi^+$
 \item computed invariant mass for all three possible cases
 \item plot under condition that charges sum to zero - reoccurring events form peak
 \item found multiple peaks: D mason from $K\pi$ decay and two relatively slightly shifted peaks in both $K\pi$ and $\pi \pi$
 \item applied D mason cut: reject all events with D mason mass $\pm 30 ~MeV/c^2$
-\item \textit{find out what other peaks are}
 \item no need to exclude muon tracks misidentified as pions - excluded muons from the start
-\item \textit{why do muon get easily misidentified as pions?}
+\item \textit{why do muon get easily misidentified as pions?} - similar mass
+\item \textit{check that none of the resonance peaks have c quarks}
 \end{itemize}
 \end{itemize}
+
+\section{Week 2}
+\begin{itemize}
+\item Fitting:
+\begin{itemize}
+\item Normalized Gaussian to signal and combinatorial background
+\item Exponential to background
+\item subtracted background and combinatorial background from histogram
+\item separated $B^+$ and $B^-$ decays by considering $K$ charge and plotted them individually
+\item Gaussian integral divided by bin width gave counts in each peak
+\item from this we could find value CP asymmetry - consistent with 0
+\end{itemize}
+\item{Dalitz plots:}
+\begin{itemize}
+\item created dalitz plots for simulation data
+\item created dalitz plots for all data - including D mason. Clearly saw this on the plot
+\item cut regions of $5284.37 \pm 40~MeV/c^2$ of B mason mass
+\item did this individually for $B^\pm$
+\item rough background subtraction by taking the background from the B mason mass data, just above the peak and subtracting that
+\item background data is from higher mass region and therefore slightly larger on the Dalitz plot - hence we get negative entries on the upper edge
+\item floor histograms to zero
+
+\end{itemize}
+\end{itemize}
+
+\section{Week 3}
+\begin{itemize}
+\item{Dalitz plots:}
+\begin{itemize}
+\item integrate background function under peak and the background used for subtraction and scale background used for subtraction
+\item variable bin size so that fluctuations of number of bins across dalitz plots for $B^\pm$ are minimal - could have done by optimization, but only did it by eye to save time
+\item calculate error in each bin first using the \verb| hdalitzass->Sumw2();| function and then the\\ \verb| hdalitzass->GetBinError(a,b) | function
+\item cut all errors $> 0.4$
+\item set all bins to zero which have 0 entries in either of $B^\pm$ plots
+\item produce significance plot: asymmetry / error - this shows us the most trustworthy regions
+\item produced asymmerty plot with error cuts
+\end{itemize}
+
+\item{CP violation}
+\begin{itemize}
+\item best region found was $m_{K\pi}^2 < 15~GeV^2/c^4$ and $0~GeV^2/c^4 < m_{\pi\pi}^2 < 0.6~GeV^2/c^4$
+\item only for that region produced three body decay histograms with errorbars - both for $B^\pm$
+\item see a clear difference in the peak - $B^-$ decay leads to a much larger signal than $B^+ decay$
+\item Now do a plot for $B^+$ and $B^-$ combined and do a fit
+\item now for individual plots, take a 2 sigma range around the mean and the width of the combined fit and set this as a range for the individual fits - there is no reason why width and mean should be different
+\item found a good fit, which represents data well and a asymmetry value consistent with the value found in the paper
+\item analysed region 2 : $21~GeV^2/c^4 < m_{K\pi}^2 < 25~GeV^2/c^4$ and $1.2~GeV^2/c^4 < m_{\pi\pi}^2 < 3~GeV^2/c^4$
+\item found negative asymmetry, as expected
+\item here we can not see and 4body background.
+\item had to add additional restrictions to make the fitting work. these included setting amplitude and sigma of the 4body gaussian to above 0
+\end{itemize}
+\end{itemize}
+
+\section{Week 4}
+\begin{itemize}
+\item changed standard error that assumes poisson, to error including errors from fit
+\item{Systematic errors}
+\begin{itemize}
+\item The decay $B^{\pm} \rightarrow J/ \psi K^{\pm}, J/\psi \rightarrow \mu^+\mu^-$? serves as a control channel for $B^{\pm} \rightarrow h^{\pm}h^+h^-$ decay modes. Since it has negligible CP violation, the raw asymmetry observed in $B^{\pm} \rightarrow J/ \psi K^{\pm}$ decays is entirely due to production and detection asymmetries.
+\begin{itemize}
+\item remove all cuts except for probK > 0.9 and introduce cut $3050~MeV/c^2 < m_{\pi\pi} < 3150~MeV/c^2$, which is the $J/ \psi$ mass
+\item we can write all asymmetries as $A_{CP} = A_{raw} - A_{\Delta}$, where $A_{CP}$ is the desired result, $A_{raw}$ is what we measure and $A_{\Delta}$ is a correction term
+\item we can estimate this correction term for $J/ \psi$ by measuring the asymmetry and subtracting the known value from PDG, errors added in quardature
+\item this correction can be subtracted from all measurements as it represents detection/production asymmetry and the error on $A_{\Delta}$ is assigned as a type of systematic error
+\end{itemize}
+\item Magnet UP/DOWN:
+\begin{itemize}
+\item first created asymmetry dalitz plots for magnet up and down individually with individual backgrounds
+\item then we created a dalitz plot of significance : difference between the magnet polarity data divided by errors added in quadrature
+\item took all the bins and plotted a 1D histogram of the significance in each bin
+\item found that this follows a Bell curve, consistent with mean 0, suggesting that this systematic error is not significant for this analysis, the statistical error is much larger
+\item Analysing the significance of the asymmetry difference, for the different magnet polarities, in every bin in the Dalitz plot, it was shown that this follows a normal distribution, as expected for data under no systematic influence.
+\end{itemize}
+\item different models:
+\begin{itemize}
+\item took global asymmetry data and fit 4 models to the data
+\item functions include: normalised gaussian, linear, exponential, landau
+\item got different asymmetry from each
+\item compute standard deviation from these  to get systematic error
+\item repeat for every A
+\item A is still just from one model but get a systematic error from this
+\end{itemize}
+\end{itemize}
+\item{Resonance state cut}
+\begin{itemize}
+\item took a region of $\rho(770) \pm 100~MeV/c^2$ and cut this from the data and the we cut everything but this region
+\item our region 1 in the dalitz plot contains $\rho(770)$ and therefore we saw a corresponding effect here.
+\item when removing the region the asymmetry decreased drastically - also a larger error due to the fitting getting worse
+\item on the contrary cutting everything but this region lead to a very large asymmetry
+\item this suggests that CP asymmetry is caused by this resonance state
+\item barely enough data points were available
+\end{itemize}
+\end{itemize}
+
+\section{Improvements}
+\begin{itemize}
+\item more sophisticated background and signal fitting - maybe with physical / statistical reasoning behind it; this would reduce systematic uncertainty
+\item Dalitz plot optimisation - now we could have possible misidentification of certain regions
+\item further investigation on momentum dependence of systematic uncertainties - would affect some local regions more than others if present
+\end{itemize}
+
+\section{Results}
+~\\[5mm]
+
+\LARGE Global asymmetry\\[2mm] $~~~A_{CP} = -0.004~\pm0.013\textrm{(stat)}~\pm0.007\textrm{(syst)}~\pm0.007\textrm{($J/\Psi$)}$\\[5mm]
+\LARGE Local negative asymmetry\\[2mm] $~~~A_{CP} = -0.225~\pm0.009(stat) ~\pm0.018(syst)~\pm0.007\textrm{($J/\Psi$)}$\\[5mm]
+%CHANGE!!!!!!!!
+\LARGE Local positive asymmetry\\[5mm] $~~~A_{CP} = ~0.729~\pm0.051\textrm{(stat)}~\pm0.048\textrm{(syst)}~\pm0.007\textrm{($J/\Psi$)}$\\[5mm]
+
+\LARGE $670< M_{\pi\pi} < 870~[\textrm{MeV/c$^2$}]:$\\[1mm]
+$~~~A_{CP} = 0.746~\pm0.042\textrm{(stat)}~\pm0.048\textrm{(syst)}~\pm0.007\textrm{($J/\Psi$)}$\\[5mm]
+\LARGE $ M_{\pi\pi} < 670,~M_{\pi\pi} > 870~[\textrm{MeV/c$^2$}]:$\\[1mm]
+$~~~A_{CP} = 0.452~\pm0.153\textrm{(stat)}~\pm0.048\textrm{(syst)}~\pm0.007\textrm{($J/\Psi$)}$\\[5mm]
+
+
+
+
+
+
 
 
 \end{document}
